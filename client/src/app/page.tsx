@@ -1,9 +1,11 @@
 // src/app/page.tsx
 
-'use client'; // Mark this component as a client component
+"use client"; // Mark this component as a client component
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Use next/navigation in the App Router
+import { useState } from "react";
+import { useRouter } from "next/navigation"; // Use next/navigation in the App Router
+
+import SignUpModal from "./components/SignUpModel";
 
 interface Question {
   question: string;
@@ -11,14 +13,25 @@ interface Question {
 }
 
 export default function Home() {
-  const [questions, setQuestions] = useState<Question[]>([{ question: '', answer: '' }]);
+  // the signup decleration
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  // end signup
+  const [questions, setQuestions] = useState<Question[]>([
+    { question: "", answer: "" },
+  ]);
   const router = useRouter();
 
   const addQuestion = () => {
-    setQuestions([...questions, { question: '', answer: '' }]);
+    setQuestions([...questions, { question: "", answer: "" }]);
   };
 
-  const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    index: number,
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const { name, value } = event.target;
     const updatedQuestions = [...questions];
     updatedQuestions[index][name as keyof Question] = value;
@@ -28,14 +41,23 @@ export default function Home() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     router.push({
-      pathname: '/quiz',
+      pathname: "/quiz",
       query: { questions: JSON.stringify(questions) },
     });
   };
 
   return (
     <div className="max-w-2xl mx-auto py-8">
-      <h1 className="text-3xl font-bold text-center mb-8">Quiz Generator</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-center mb-8">Quiz Generator</h1>
+        <button
+          onClick={openModal}
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        >
+          Sign Up
+        </button>
+        <SignUpModal isOpen={isModalOpen} onClose={closeModal} />
+      </div>
       <form onSubmit={handleSubmit}>
         {questions.map((q, index) => (
           <div key={index} className="mb-4">
@@ -66,7 +88,10 @@ export default function Home() {
         >
           Add Question
         </button>
-        <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+        <button
+          type="submit"
+          className="bg-green-500 text-white px-4 py-2 rounded"
+        >
           Generate Quiz
         </button>
       </form>
