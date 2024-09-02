@@ -2,26 +2,6 @@
 
 This directory contains the backend code for the Quiz App, built using Python FastAPI. The backend handles the API endpoints, including health checks, and serves as the core engine for the application's logic.
 
-## Project Structure
-
-```
-server/
-│
-├── Pipfile
-├── Pipfile.lock
-├── .env
-├── main.py
-└── README.md
-```
-
-### Files & Directories
-
-- **`Pipfile`**: Manages the Python dependencies for the project using `pipenv`.
-- **`Pipfile.lock`**: Locks the specific versions of the dependencies to ensure consistency across different environments.
-- **`.env`**: Stores environment variables, including the port number for the FastAPI server.
-- **`main.py`**: The entry point for the FastAPI application, where the API routes and health check endpoint are defined.
-- **`README.md`**: This document, providing an overview of the backend setup and instructions for development.
-
 ## Requirements
 
 - **Python**: 3.12
