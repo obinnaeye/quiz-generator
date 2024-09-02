@@ -5,6 +5,6 @@ app = FastAPI()
 
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 
-@app.get("/")
+@app.get("/api")
 def read_root():
     return {"message": "Welcome to the Quiz App API!"}
