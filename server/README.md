@@ -1,4 +1,4 @@
-# Quiz App Server
+# Quiz Generator App Server
 
 This directory contains the backend code for the Quiz App, built using Python FastAPI. The backend handles the API endpoints, including health checks, and serves as the core engine for the application's logic.
 
