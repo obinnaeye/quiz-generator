@@ -49,8 +49,6 @@ Make sure the `.env` file contains the following variable:
 PORT=8000
 ```
 
-You can change the port number as needed.
-
 ### 5. Run the Application
 
 Start the FastAPI server with the following command:
@@ -71,8 +69,4 @@ http://localhost:8000/api/healthcheck
 
 You should receive a JSON response confirming the server is up and running.
 
-## Code Quality
-
-- Type annotations are used throughout the codebase to ensure type safety and clarity.
-- The use of `any` is avoided to maintain code integrity and predictability.
 
