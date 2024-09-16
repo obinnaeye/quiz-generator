@@ -1,4 +1,4 @@
-# Quiz App Server
+# Quiz Generator App Server
 
 This directory contains the backend code for the Quiz App, built using Python FastAPI. The backend handles the API endpoints, including health checks, and serves as the core engine for the application's logic.
 
@@ -17,7 +17,17 @@ git clone https://github.com/yourusername/quiz-app.git
 cd quiz-app/backend
 ```
 
-### 2. Install Dependencies
+### 2. Create virtual enviroment
+Ensure you are in the server directory then run the following command
+
+```bash
+python -m venv .venv
+```
+```bash
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
 
 Ensure you have Python 3.12 installed. Then, install the required dependencies using `pipenv`.
 
@@ -25,7 +35,7 @@ Ensure you have Python 3.12 installed. Then, install the required dependencies u
 pipenv install
 ```
 
-### 3. Setup Environment Variables
+### 4. Setup Environment Variables
 
 The project uses `direnv` to manage environment variables from the `.env` file. Ensure you have `direnv` installed and then run:
 
@@ -39,19 +49,17 @@ Make sure the `.env` file contains the following variable:
 PORT=8000
 ```
 
-You can change the port number as needed.
-
-### 4. Run the Application
+### 5. Run the Application
 
 Start the FastAPI server with the following command:
 
 ```bash
-pipenv run uvicorn main:app --reload
+fastapi dev app/main.py
 ```
 
 The API will be accessible at `http://localhost:8000/api`.
 
-### 5. Access Healthcheck
+### 6. Access Healthcheck
 
 Verify the API is running correctly by visiting the health check endpoint:
 
@@ -61,8 +69,4 @@ http://localhost:8000/api/healthcheck
 
 You should receive a JSON response confirming the server is up and running.
 
-## Code Quality
-
-- Type annotations are used throughout the codebase to ensure type safety and clarity.
-- The use of `any` is avoided to maintain code integrity and predictability.
 
