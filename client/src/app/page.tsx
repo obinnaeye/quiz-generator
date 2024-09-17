@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation"; // Use next/navigation in the App Router
 
 import SignUpModal from "./components/SignUpModel";
+import SignInModal from "./components/SignInModal";
 
 interface Question {
   question: string;
@@ -14,11 +15,17 @@ interface Question {
 
 export default function Home() {
   // the signup decleration
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const openSignUpModal = () => setIsSignUpModalOpen(true);
+  const closeSignUpModal = () => setIsSignUpModalOpen(false);
   // end signup
+
+  // the signin declaration
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
+  const openSignInModal = () => setIsSignInModalOpen(true);
+  const closeSignInModal = () => setIsSignInModalOpen(false);
+
+  // Quiz form state
   const [questions, setQuestions] = useState<Question[]>([
     { question: "", answer: "" },
   ]);
@@ -50,13 +57,26 @@ export default function Home() {
     <div className="max-w-2xl mx-auto py-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold text-center mb-8">Quiz Generator</h1>
-        <button
-          onClick={openModal}
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-        >
-          Sign Up
-        </button>
-        <SignUpModal isOpen={isModalOpen} onClose={closeModal} />
+        <div className="flex items-end">
+          {/* Sign Up Button */}
+          <button
+            onClick={openSignUpModal}
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+          >
+            Sign Up
+          </button>
+
+          {/* Sign In Button */}
+          <button
+            onClick={openSignInModal}
+            className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 ml-4"
+          >
+            Sign In
+          </button>
+
+          <SignUpModal isOpen={isSignUpModalOpen} onClose={closeSignUpModal} />
+          <SignInModal isOpen={isSignInModalOpen} onClose={closeSignInModal} />
+        </div>
       </div>
       <form onSubmit={handleSubmit}>
         {questions.map((q, index) => (
