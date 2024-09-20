@@ -17,6 +17,14 @@ class User(BaseModel):
     email: EmailStr
     password: str
 
+class LoginRequest(BaseModel):
+    username_or_email: str
+    password: str
+
+class LoginResponse(BaseModel):
+    message: str
+    user: User
+
 mock_db: list[User] = []
 
 
@@ -25,6 +33,9 @@ mock_db: list[User] = []
 def create_user(user:User):
     if any(existing_user.username == user.username for existing_user in mock_db):
         raise HTTPException(status_code=400, detail="Username already taken")
+
+    if any(existing_user.email == user.email for existing_user in mock_db):
+        raise HTTPException(status_code=400, detail="Email already registered")
     
     mock_db.append(user)
     return user
@@ -34,10 +45,11 @@ def create_user(user:User):
 def list_users():
     return mock_db
 
-# The login using username or email and password
-@app.post("/login/")
-def login(username_or_email: str, password: str):
-    user = next((u for u in mock_db if (u.username == username_or_email or u.email == username_or_email) and u.password == password), None)
+
+
+@app.post("/login/", response_model=LoginResponse)
+def login(request: LoginRequest):  
+    user = next((u for u in mock_db if (u.username == request.username_or_email or u.email == request.username_or_email) and u.password == request.password), None)
 
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
