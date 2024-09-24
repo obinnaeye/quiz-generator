@@ -3,17 +3,18 @@
 'use client'; // Mark this component as a client component
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Quiz() {
   const [score, setScore] = useState<number | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams(); // Move useSearchParams to the top level
   const [parsedQuestions, setParsedQuestions] = useState<{ question: string; answer: string }[]>([]);
 
   useEffect(() => {
-    const query = router.query.questions as string;
+    const query = searchParams.get('questions') as string;
     setParsedQuestions(JSON.parse(query || '[]'));
-  }, [router.query]);
+  }, [searchParams]); // Remove `router.query` from the dependency array
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -53,4 +54,3 @@ export default function Quiz() {
     </div>
   );
 }
-

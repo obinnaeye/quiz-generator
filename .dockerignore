@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+.next
+.env
+*.pyc
+__pycache__
+Dockerfile
+docker-compose.yml
