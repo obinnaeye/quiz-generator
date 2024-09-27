@@ -1,13 +1,18 @@
 {
+  "type": "module",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
     "eslint": "^9.9.1",
-    "husky": "^9.1.5",
+    "eslint-plugin-react": "^7.36.1",
+    "husky": "^8.0.0",
     "lint-staged": "^15.2.10",
     "prettier": "^3.3.3"
   },
   "scripts": {
-    "prepare": "husky",
-    "pre-commit": "lint-staged"
+    "prepare": "husky && husky install",
+    "pre-commit": "lint-staged",
+    "test": "echo \"No tests specified\" && exit 0"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
@@ -16,6 +21,14 @@
     ],
     "*.{json,css,md}": [
       "prettier --write"
+    ],
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.ts": [
+      "eslint --fix",
+      "git add"
     ]
   }
 }

@@ -46,12 +46,10 @@ export default function Home() {
   };
 
   const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    router.push({
-      pathname: "/quiz",
-      query: { questions: JSON.stringify(questions) },
-    });
-  };
+  event.preventDefault();
+  router.push(`/quiz?questions=${encodeURIComponent(JSON.stringify(questions))}`);
+};
+
 
   return (
     <div className="max-w-2xl mx-auto py-8">
