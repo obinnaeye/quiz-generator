@@ -1,5 +1,3 @@
-version: '3.8'  # Specify the version of Docker Compose
-
 services:  
   client:
     build:
