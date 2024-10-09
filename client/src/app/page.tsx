@@ -1,5 +1,3 @@
-// src/app/page.tsx
-
 "use client"; // Mark this component as a client component
 
 import { useState } from "react";
@@ -14,10 +12,11 @@ interface Question {
 }
 
 export default function Home() {
-  // the signup decleration
+  // the signup declaration
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
   const openSignUpModal = () => setIsSignUpModalOpen(true);
   const closeSignUpModal = () => setIsSignUpModalOpen(false);
+  
   // end signup
 
   // the signin declaration
@@ -29,11 +28,8 @@ export default function Home() {
   const [questions, setQuestions] = useState<Question[]>([
     { question: "", answer: "" },
   ]);
+  const [quizStatus, setQuizStatus] = useState(""); // State to manage quiz status message
   const router = useRouter();
-
-  const addQuestion = () => {
-    setQuestions([...questions, { question: "", answer: "" }]);
-  };
 
   const handleInputChange = (
     index: number,
@@ -45,11 +41,27 @@ export default function Home() {
     setQuestions(updatedQuestions);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-  event.preventDefault();
-  router.push(`/quiz?questions=${encodeURIComponent(JSON.stringify(questions))}`);
-};
+  const handleGenerateQuizClick = async () => {
+    try {
+      // Call the FastAPI endpoint
+      const response = await fetch("http://localhost:8000/api/generate-quiz");
+      const data = await response.json();
 
+      if (response.ok) {
+        // Display "quiz generated" message
+        setQuizStatus("Quiz generated");
+      } else {
+        console.error("Error:", data);
+        alert("Failed to generate quiz");
+      }
+    } catch (error) {
+      console.error("Error fetching the API:", error);
+      alert("Error occurred while generating quiz");
+    }
+
+  };
+
+  
 
   return (
     <div className="max-w-2xl mx-auto py-8">
@@ -76,7 +88,7 @@ export default function Home() {
           <SignInModal isOpen={isSignInModalOpen} onClose={closeSignInModal} />
         </div>
       </div>
-      <form onSubmit={handleSubmit}>
+      <div>
         {questions.map((q, index) => (
           <div key={index} className="mb-4">
             <input
@@ -88,31 +100,22 @@ export default function Home() {
               className="w-full p-2 mb-2 border border-gray-300 rounded"
               required
             />
+            {/* Output field to display quiz status */}
             <input
               type="text"
-              name="answer"
-              placeholder="Enter answer"
-              value={q.answer}
-              onChange={(event) => handleInputChange(index, event)}
+              value={quizStatus}
+              readOnly
               className="w-full p-2 border border-gray-300 rounded"
-              required
             />
           </div>
         ))}
         <button
-          type="button"
-          onClick={addQuestion}
-          className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-        >
-          Add Question
-        </button>
-        <button
-          type="submit"
+          onClick={handleGenerateQuizClick}
           className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Generate Quiz
         </button>
-      </form>
+      </div>
     </div>
   );
 }

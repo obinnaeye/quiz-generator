@@ -9,8 +9,9 @@
     # Install PNPM globally
     RUN npm install -g pnpm
     
-    # Copy the client directory to the container
+    # Copy the client directory and pnpm-lock.yaml file to the container
     COPY client/ .
+    COPY client/pnpm-lock.yaml .
     
     # Install frontend dependencies and build the app
     RUN pnpm install
@@ -28,12 +29,12 @@
     
     # Copy the Pipfile and Pipfile.lock
     COPY server/Pipfile server/Pipfile.lock ./
-
+    
     # Set timeout
     ENV PIP_DEFAULT_TIMEOUT=100
-
+    
     RUN pip install --upgrade pip pipenv && \
-    pipenv install --system --deploy
+        pipenv install --system --deploy
     
     # Copy the rest of the backend code
     COPY server/ .
@@ -53,10 +54,18 @@
     COPY --from=frontend-build /client/.next /client/.next
     COPY --from=frontend-build /client/node_modules /client/node_modules
     COPY --from=frontend-build /client/public /client/public
+    COPY --from=frontend-build /client/package.json /client/
     
     # Copy the backend from backend-build stage
     COPY --from=backend-build /server /server
     
-    # Set the default command for the backend (FastAPI)
-    CMD ["pipenv", "run", "fastapi", "dev", "server/app/main.py", "--host", "0.0.0.0", "--port", "${BACKEND_PORT}"]
+    # Install PNPM for running frontend in the final stage
+    RUN npm install -g pnpm
+    
+    # ---------- ENTRYPOINT SETUP ----------
+    # To serve the frontend and backend concurrently, use a script or supervisord
+    COPY docker-entrypoint.sh /usr/local/bin/
+    RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+    
+    ENTRYPOINT ["docker-entrypoint.sh"]
     
