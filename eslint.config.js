@@ -44,6 +44,18 @@ const eslintConfig = [
       'react/prop-types': 'off', // Disable prop-types as we use TypeScript
     },
   },
+
+  {
+    "overrides": [
+      {
+        "files": ["tests/**/*"],
+        "plugins": ["jest"],
+        "env": {
+          "jest/globals": true
+        }
+      }
+    ]
+  }
 ];
 
 export default eslintConfig;
