@@ -11,7 +11,7 @@ export default function QuizGenerationForm () {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission logic here
+    //  Form submission logic to be handled here
     console.log({ profession, numQuestions, questionType });
   };
 
