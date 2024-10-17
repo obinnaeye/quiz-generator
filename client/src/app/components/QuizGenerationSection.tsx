@@ -21,12 +21,12 @@ export default function QuizGenerationSection ({
   setQuestionType,
 }: QuizGenerationSectionProps) {
   return (
-    <section className="max-w-lg mx-auto p-4 bg-white rounded shadow-md">
+    <section className="w-full p-2 mb-2 border border-gray-300 rounded">
       <h2 className="text-lg font-semibold mb-4">Complete The Fields Below To Generate Quiz</h2>
 
       <div className="mb-4">
         <label htmlFor="profession" className="block text-sm font-medium text-gray-700">
-          Field/Profession
+        Enter The Concept/Context For This Quiz
         </label>
         <input
           type="text"
@@ -34,14 +34,14 @@ export default function QuizGenerationSection ({
           value={profession}
           onChange={(e) => setProfession(e.target.value)}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500"
-          placeholder="Enter the field or profession here"
+          placeholder="Enter the concept/context here"
           required
         />
       </div>
 
       <div className="mb-4">
         <label htmlFor="numQuestions" className="block text-sm font-medium text-gray-700">
-          Number of Questions (1-10)
+          Enter Number of Quiz Questions (1-10)
         </label>
         <input
           type="number"
@@ -51,14 +51,14 @@ export default function QuizGenerationSection ({
           min="1"
           max="10"
           className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500"
-          placeholder="Enter the number of questions to be generated here"
+          placeholder="Enter the number of quiz questions to be generated here"
           required
         />
       </div>
 
       <div className="mb-4">
         <label htmlFor="questionType" className="block text-sm font-medium text-gray-700">
-          Choose Question Type
+          Select Quiz Type
         </label>
         <select
           id="questionType"
@@ -66,8 +66,9 @@ export default function QuizGenerationSection ({
           onChange={(e) => setQuestionType(e.target.value)}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500"
         >
-          <option value="multichoice">Multiple Choice Questions</option>
-          <option value="theory">Theory/Essay Questions</option>
+          <option value="multichoice">Multiple Choice</option>
+          <option value="true-false">True or False</option>
+          <option value="open-ended">Open Ended</option>
         </select>
       </div>
 
