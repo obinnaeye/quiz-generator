@@ -67,14 +67,6 @@ export default function QuizGenerationSection ({
           <option value="open-ended">Open Ended</option>
         </select>
       </div>
-
-      {/* <button
-        type="button"
-        onClick={onGenerateQuiz}
-        className="w-full bg-blue-500 text-white font-bold py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
-      >
-        Generate Quiz
-      </button> */}
     </section>
   );
 };
