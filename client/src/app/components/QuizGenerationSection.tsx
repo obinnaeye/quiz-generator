@@ -1,7 +1,3 @@
-//src/app/component/QuizGenerationSection.tsx
-
-
-// QuizForm  Component input field section, state managed at the parent Component (QuizForm)
 
 interface QuizGenerationSectionProps {
   profession: string;
