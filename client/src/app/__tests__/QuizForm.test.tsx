@@ -8,14 +8,14 @@ describe('QuizForm', () => {
     render(<QuizForm />);
     
    
-    expect(screen.getByPlaceholderText('Enter question')).toBeInTheDocument(); // Assuming QuizDisplayField has a placeholder
-    expect(screen.getByRole('button', { name: /generate quiz/i })).toBeInTheDocument(); // Assuming GenerateButton has this text
+    expect(screen.getByPlaceholderText('Enter question')).toBeInTheDocument(); 
+    expect(screen.getByRole('button', { name: /generate quiz/i })).toBeInTheDocument(); 
   });
 
   test('updates question input on change', () => {
     render(<QuizForm />);
     
-    const input = screen.getByPlaceholderText('Enter question'); // Assuming there's a placeholder in QuizDisplayField
+    const input = screen.getByPlaceholderText('Enter question'); 
     fireEvent.change(input, { target: { value: 'What is your favorite color?' } });
     
     expect(input).toHaveValue('What is your favorite color?');
@@ -24,10 +24,10 @@ describe('QuizForm', () => {
   test('generates quiz and updates status', async () => {
     render(<QuizForm />);
     
-    const input = screen.getByPlaceholderText('Enter question'); // Assuming there's a placeholder in QuizDisplayField
+    const input = screen.getByPlaceholderText('Enter question'); 
     fireEvent.change(input, { target: { value: 'What is your favorite color?' } });
     
-    const generateButton = screen.getByRole('button', { name: /generate quiz/i }); // Assuming GenerateButton has this text
+    const generateButton = screen.getByRole('button', { name: /generate quiz/i }); 
     fireEvent.click(generateButton);
     
     
