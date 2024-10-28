@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import QuizForm from '../components/QuizForm';
-const { expect, describe, it } = require('@jest/globals');
+
 
 describe('QuizForm', () => {
   test('renders the quiz form with initial state', () => {

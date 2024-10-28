@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import SignUpButton from '../components/SignUpButton';
-const { expect, describe, it } = require('@jest/globals');
+
 
 describe('SignUpButton', () => {
   it('renders the sign-up button', () => {

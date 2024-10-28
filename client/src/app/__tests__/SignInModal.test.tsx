@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import SignInModal from '../components/SignInModal';
-const { expect, describe, it } = require('@jest/globals');
+
 
 
 

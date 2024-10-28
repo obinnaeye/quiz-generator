@@ -12,7 +12,6 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    
     "plugins": [
       {
         "name": "next"
@@ -21,6 +20,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": ["jest", "node"],
    
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
