@@ -4,7 +4,6 @@ import { useState } from "react";
 import QuizDisplayField from "./QuizDisplayField";
 import QuizStatus from "./QuizStatus";
 import GenerateButton from "./GenerateButton";
-import QuizGenerationForm from "./QuizGenerationForm";
 import QuizGenerationSection from "./QuizGenerationSection";
 
 export default function QuizForm() {
@@ -15,6 +14,7 @@ export default function QuizForm() {
   const [profession,setProfession,] = useState("");
   const [numQuestions,setNumQuestions,] = useState(1);
   const [questionType,setQuestionType,] = useState("");
+  const [difficultyLevel, setDifficultyLevel] = useState("")
 
 
 
@@ -25,7 +25,7 @@ export default function QuizForm() {
   const handleGenerateQuiz = async () => {
     // Call the FastAPI endpoint here and set quizStatus to "Quiz generated"
     // (Replace with actual API call)
-    console.log({ profession, numQuestions, questionType });
+    console.log({ profession, numQuestions, questionType , difficultyLevel});
     setQuizStatus("Quiz generated");
   };
 
@@ -33,7 +33,7 @@ export default function QuizForm() {
     <form onSubmit={(e) => e.preventDefault()}>
       {/* <QuizDisplayField question={question} onChange={handleInputChange} /> */}
       {/* <QuizGenerationForm /> */}
-      <QuizGenerationSection profession={profession} setProfession={setProfession} questionType={questionType} setQuestionType={setQuestionType} numQuestions={numQuestions} setNumQuestions={setNumQuestions} />
+      <QuizGenerationSection profession={profession} setProfession={setProfession} questionType={questionType} setQuestionType={setQuestionType} numQuestions={numQuestions} setNumQuestions={setNumQuestions} difficultyLevel={difficultyLevel} setDifficultyLevel={setDifficultyLevel} />
       <QuizStatus status={quizStatus} />
       <GenerateButton onClick={handleGenerateQuiz} />
     </form>
