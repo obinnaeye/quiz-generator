@@ -6,6 +6,8 @@ interface QuizGenerationSectionProps {
   setNumQuestions: (value: number) => void;
   questionType: string;
   setQuestionType: (value: string) => void;
+  difficultyLevel: string;
+  setDifficultyLevel: (value: string) => void;
 }
 
 export default function QuizGenerationSection ({
@@ -15,6 +17,8 @@ export default function QuizGenerationSection ({
   setNumQuestions,
   questionType,
   setQuestionType,
+  difficultyLevel,
+  setDifficultyLevel,
 }: QuizGenerationSectionProps) {
   return (
     <section className="w-full p-2 mb-2 border border-gray-300 rounded">
@@ -67,7 +71,21 @@ export default function QuizGenerationSection ({
           <option value="open-ended">Open Ended</option>
         </select>
       </div>
+      <div className="mb-4">
+        <label htmlFor="difficultyLevel" className="block text-sm font-medium text-gray-700">
+          Select Difficulty Level
+        </label>
+        <select
+          id="difficultyLevel"
+          value={difficultyLevel}
+          onChange={(e) => setDifficultyLevel(e.target.value)}
+          className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring focus:ring-blue-500"
+        >
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
     </section>
   );
 };
-
