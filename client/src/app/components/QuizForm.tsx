@@ -13,8 +13,8 @@ export default function QuizForm() {
   //
   const [profession,setProfession,] = useState("");
   const [numQuestions,setNumQuestions,] = useState(1);
-  const [questionType,setQuestionType,] = useState("");
-  const [difficultyLevel, setDifficultyLevel] = useState("")
+  const [questionType,setQuestionType,] = useState("multichoice");
+  const [difficultyLevel, setDifficultyLevel] = useState("easy")
 
 
 
