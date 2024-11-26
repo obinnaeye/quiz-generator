@@ -1,7 +1,6 @@
-// src/app/page.tsx
-
 "use client";
 
+import React from "react";
 import SignUpButton from "./components/SignUpButton";
 import SignInButton from "./components/SignInButton";
 import QuizForm from "./components/QuizForm";
@@ -16,7 +15,7 @@ export default function Home() {
           <SignInButton />
         </div>
       </div>
-      <QuizForm />
+      <QuizForm /> {/* QuizForm handles both form input and quiz generation */}
     </div>
   );
 }
