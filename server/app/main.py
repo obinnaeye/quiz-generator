@@ -193,7 +193,6 @@ async def download_quiz(
     type: str = Query("multichoice", description="Type of questions requested (multichoice, true-false, open-ended)"),
     numQuestion: int = Query(..., description="Number of questions to include in the download", ge=1)
 ):
-    # Fetch the data based on type
     if type == "multichoice":
         quiz_data = quiz_data_multiple_choice
     elif type == "true-false":
@@ -203,7 +202,6 @@ async def download_quiz(
     else:
         raise HTTPException(status_code=400, detail="Unsupported question_type")
 
-    # Slice the data to include only the specified number of questions
     sliced_quiz_data = quiz_data[:numQuestion]
     
     if format == "txt":
