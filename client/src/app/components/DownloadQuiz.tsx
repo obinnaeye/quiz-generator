@@ -6,10 +6,11 @@ import { Observable } from 'rxjs';
 type FileFormat = 'txt' | 'csv' | 'pdf' | 'docx';
 
 interface downloadQuizProps {
-    question_type: string
+    question_type: string,
+    numQuestion: number
 }
 
-export default function DownloadQuiz ({question_type}: downloadQuizProps ) {
+export default function DownloadQuiz ({question_type, numQuestion}: downloadQuizProps ) {
   const [selectedFormat, setSelectedFormat] = useState<FileFormat>('txt');
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -25,7 +26,8 @@ export default function DownloadQuiz ({question_type}: downloadQuizProps ) {
           responseType: 'blob',
           params: {
             format: selectedFormat,
-            type: question_type
+            type: question_type,
+            numQuestion,
           }
         })
         .then((response) => {

@@ -169,40 +169,54 @@ app.add_middleware(
 
 
 
+
 @app.get("/generate-quiz")
-def generate_quiz(question_type: str = Query(..., description="Type of questions requested (multichoice, true-false, open-ended)")):
+def generate_quiz(
+    question_type: str = Query(..., description="Type of questions requested (multichoice, true-false, open-ended)"),
+    numQuestion: int = Query(..., description="Number of questions requested", ge=1)
+):
     if question_type == "multichoice":
-        return {"quiz_data": quiz_data_multiple_choice}
+        questions = quiz_data_multiple_choice
     elif question_type == "true-false":
-        return {"quiz_data": quiz_data_true_false}
+        questions = quiz_data_true_false
     elif question_type == "open-ended":
-        return {"quiz_data": quiz_data_open_ended}
+        questions = quiz_data_open_ended
     else:
         raise HTTPException(status_code=400, detail="Invalid question type")
 
+    return {"quiz_data": questions[:numQuestion]}
+
+
 @app.get("/download-quiz/")
-async def download_quiz(format: str = "txt", type: str = "multichoice"):
+async def download_quiz(
+    format: str = Query("txt", description="File format for the quiz data (txt, csv, pdf, etc.)"),
+    type: str = Query("multichoice", description="Type of questions requested (multichoice, true-false, open-ended)"),
+    numQuestion: int = Query(..., description="Number of questions to include in the download", ge=1)
+):
+    # Fetch the data based on type
     if type == "multichoice":
         quiz_data = quiz_data_multiple_choice
     elif type == "true-false":
         quiz_data = quiz_data_true_false
     elif type == "open-ended":
         quiz_data = quiz_data_open_ended
-    else :
+    else:
         raise HTTPException(status_code=400, detail="Unsupported question_type")
 
+    # Slice the data to include only the specified number of questions
+    sliced_quiz_data = quiz_data[:numQuestion]
     
     if format == "txt":
-        buffer = generate_txt(quiz_data)
+        buffer = generate_txt(sliced_quiz_data)
         content_type = "text/plain"
     elif format == "csv":
-        buffer = generate_csv(quiz_data)
+        buffer = generate_csv(sliced_quiz_data)
         content_type = "text/csv"
     elif format == "pdf":
-        buffer = generate_pdf(quiz_data)
+        buffer = generate_pdf(sliced_quiz_data)
         content_type = "application/pdf"
     elif format == "docx":
-        buffer = generate_docx(quiz_data)
+        buffer = generate_docx(sliced_quiz_data)
         content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     else:
         raise HTTPException(status_code=400, detail="Unsupported file format")
