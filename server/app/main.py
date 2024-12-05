@@ -3,10 +3,12 @@ from app.api import healthcheck
 from enum import Enum
 from pydantic import BaseModel, EmailStr
 from fastapi.middleware.cors import CORSMiddleware
+from app.quiz_router import router as quiz_router
 
 app = FastAPI()
 
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
+app.include_router(quiz_router, prefix="/quiz", tags=["quiz"])
 
 @app.get("/api")
 def read_root():
