@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { determineQuizDisplay } from '../components/determineQuizDisplay';
 import CheckButton from '../components/CheckButton';
 import NewQuizButton from '../components/NewQuizButton';
 import QuizAnswerField from '../components/QuizAnswerField';
 import { useSearchParams } from 'next/navigation';
-import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers'; 
+import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers';
+import DownloadQuiz from "../components/DownloadQuiz";
+
 
 const QuizDisplayPage = () => {
     const searchParams = useSearchParams();
-    const questionType = searchParams.get('questionType');
-    const numQuestions = searchParams.get('numQuestions');
+    const questionType = searchParams.get('questionType') || 'multichoice';
+    const numQuestions = Number(searchParams.get('numQuestions')) || 1;
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
     const [quizReport, setQuizReport] = useState<any[]>([]);
@@ -86,8 +88,18 @@ const QuizDisplayPage = () => {
                     ))}
                 </div>
             )}
+            <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
         </div>
     );
 };
 
-export default QuizDisplayPage;
+
+
+export default function DisplayQuiz() {
+    return (
+      <Suspense fallback={<div>Loading quiz...</div>}>
+        <QuizDisplayPage />
+      </Suspense>
+    );
+  }
+  
