@@ -1,18 +1,24 @@
 from fastapi import FastAPI, Query, HTTPException
-from app.api import healthcheck
+from app.api import healthcheck  # Import the database route
+from app.db.routers.quiz_router import router as quiz_router
+from app.db.core.database import db_instance
 from enum import Enum
 from pydantic import BaseModel, EmailStr
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+db_instance.connect()
+
+# Include routers
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
+app.include_router(quiz_router, prefix="/api/quizzes", tags=["quizzes"])  # Add the quiz router
 
 @app.get("/api")
 def read_root():
     return {"message": "Welcome to the Quiz App API!"}
 
-
+# User model definitions
 class User(BaseModel):
     username: str
     email: EmailStr
@@ -28,10 +34,9 @@ class LoginResponse(BaseModel):
 
 mock_db: list[User] = []
 
-
-# The Register functionality
+# User registration
 @app.post("/register/", response_model=User)
-def create_user(user:User):
+def create_user(user: User):
     if any(existing_user.username == user.username for existing_user in mock_db):
         raise HTTPException(status_code=400, detail="Username already taken")
 
@@ -41,16 +46,20 @@ def create_user(user:User):
     mock_db.append(user)
     return user
 
-# List all the users
+# List all users
 @app.get("/users/", response_model=list[User])
 def list_users():
     return mock_db
 
-
-
+# User login
 @app.post("/login/", response_model=LoginResponse)
-def login(request: LoginRequest):  
-    user = next((u for u in mock_db if (u.username == request.username_or_email or u.email == request.username_or_email) and u.password == request.password), None)
+def login(request: LoginRequest):
+    user = next(
+        (u for u in mock_db if
+         (u.username == request.username_or_email or u.email == request.username_or_email) 
+         and u.password == request.password), 
+        None
+    )
 
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -60,10 +69,10 @@ def login(request: LoginRequest):
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Or use ["*"] to allow all origins (less secure)
+    allow_origins=["http://localhost:3000"],  # Adjust for your frontend origin
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/api/generate-quiz")

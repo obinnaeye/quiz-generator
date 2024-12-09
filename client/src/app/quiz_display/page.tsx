@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { determineQuizDisplay } from '../components/determineQuizDisplay';
 import CheckButton from '../components/CheckButton';
 import NewQuizButton from '../components/NewQuizButton';
@@ -8,7 +8,7 @@ import QuizAnswerField from '../components/QuizAnswerField';
 import { useSearchParams } from 'next/navigation';
 import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers'; 
 
-const QuizDisplayPage = () => {
+const QuizContent = () => {
     const searchParams = useSearchParams();
     const questionType = searchParams.get('questionType');
     const numQuestions = searchParams.get('numQuestions');
@@ -87,6 +87,14 @@ const QuizDisplayPage = () => {
                 </div>
             )}
         </div>
+    );
+};
+
+const QuizDisplayPage = () => {
+    return (
+        <Suspense fallback={<div>Loading quiz...</div>}>
+            <QuizContent />
+        </Suspense>
     );
 };
 

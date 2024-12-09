@@ -8,10 +8,11 @@ fastapi = {extras = ["standard"]}
 uvicorn = "*"
 python-dotenv = "*"
 typing_extensions = "*"
+pymongo = "*"
+pytest = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.12"
-
 
