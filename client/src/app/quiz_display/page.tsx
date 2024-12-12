@@ -8,9 +8,10 @@ import QuizAnswerField from '../components/QuizAnswerField';
 import { useSearchParams } from 'next/navigation';
 import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers';
 import DownloadQuiz from "../components/DownloadQuiz";
+import CheckQuizHistoryButton from '../components/CheckQuizHistoryButton';
 
-
-const QuizDisplayPage = () => {
+let quizHistory: any[] = [];
+const QuizDisplayPage: React.FC<{handleQuizHistory: (quizQuestions: any[]) => void}> = ({handleQuizHistory}) => {
     const searchParams = useSearchParams();
     const questionType = searchParams.get('questionType') || 'multichoice';
     const numQuestions = Number(searchParams.get('numQuestions')) || 1;
@@ -48,24 +49,25 @@ const QuizDisplayPage = () => {
                 isCorrect,
             };
         });
-
+        handleQuizHistory(quizQuestions);
         setQuizReport(report);
         setIsQuizChecked(true);
     };
 
     return (
-        <div className="quiz-container">
+        <>
+        <div >
             <h1>{questionType} Quiz</h1>
-            <div className="quiz-questions">
+            <div>
                 {quizQuestions.map((question, index) => (
-                    <div key={index} className="quiz-question">
+                    <div key={index} >
                         <h3>{index + 1}. {question.question}</h3>
-                        <QuizAnswerField
+                        {/* <QuizAnswerField
                             questionType={questionType as string}
                             index={index}
                             onAnswerChange={handleAnswerChange}
                             options={question.options} 
-                        />
+                        /> */}
                     </div>
                 ))}
             </div>
@@ -90,15 +92,23 @@ const QuizDisplayPage = () => {
             )}
             <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
         </div>
+                <div>
+                    <CheckQuizHistoryButton />
+                </div> 
+            </>
     );
 };
 
 
 
 export default function DisplayQuiz() {
+    const handleQuizHistory = (quizQuestions: any[]) => {
+        quizHistory.push(quizQuestions);
+    }
+    console.log('this is the quiz history at the moment this new quiz is displayed', quizHistory);
     return (
       <Suspense fallback={<div>Loading quiz...</div>}>
-        <QuizDisplayPage />
+        <QuizDisplayPage handleQuizHistory={handleQuizHistory}/>
       </Suspense>
     );
   }
