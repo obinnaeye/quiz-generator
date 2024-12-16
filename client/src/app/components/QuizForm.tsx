@@ -25,8 +25,6 @@ export default function QuizForm() {
       return;
     }
     
-    console.log({ profession, numQuestions, questionType , difficultyLevel});
-
     setErrorMessage("");
     const queryParams = new URLSearchParams({
       questionType,

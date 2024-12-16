@@ -8,9 +8,14 @@ import QuizAnswerField from '../components/QuizAnswerField';
 import { useSearchParams } from 'next/navigation';
 import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers';
 import DownloadQuiz from "../components/DownloadQuiz";
+import CheckQuizHistoryButton from '../components/CheckQuizHistoryButton';
 
+interface QuizDisplayPageProps{
+    handleQuizHistory: (quizQuestions: any[]) => void
+}
+let mockQuizHistory: any[] = [];
 
-const QuizDisplayPage = () => {
+const QuizDisplayPage: React.FC<QuizDisplayPageProps> = ({handleQuizHistory}) => {
     const searchParams = useSearchParams();
     const questionType = searchParams.get('questionType') || 'multichoice';
     const numQuestions = Number(searchParams.get('numQuestions')) || 1;
@@ -48,47 +53,52 @@ const QuizDisplayPage = () => {
                 isCorrect,
             };
         });
-
+        handleQuizHistory(quizQuestions);
         setQuizReport(report);
         setIsQuizChecked(true);
     };
 
     return (
         <div className="quiz-container">
-            <h1>{questionType} Quiz</h1>
-            <div className="quiz-questions">
-                {quizQuestions.map((question, index) => (
-                    <div key={index} className="quiz-question">
-                        <h3>{index + 1}. {question.question}</h3>
-                        <QuizAnswerField
-                            questionType={questionType as string}
-                            index={index}
-                            onAnswerChange={handleAnswerChange}
-                            options={question.options} 
-                        />
-                    </div>
-                ))}
-            </div>
-
-            <div className="quiz-actions">
-                <CheckButton onClick={checkAnswers} />
-                {isQuizChecked && <NewQuizButton />}
-            </div>
-
-            {isQuizChecked && (
-                <div className="quiz-report">
-                    <h2>Quiz Results</h2>
-                    {quizReport.map((report, index) => (
-                        <div key={index} className={`result ${report.isCorrect ? 'correct' : 'incorrect'}`}>
-                            <p>Question: {report.question}</p>
-                            <p>Your Answer: {report.userAnswer}</p>
-                            <p>Correct Answer: {report.correctAnswer}</p>
-                            <p>Result: {report.isCorrect ? 'Correct' : 'Incorrect'}</p>
+            <div >
+                <h1>{questionType} Quiz</h1>
+                <div className="quiz-questions">
+                    {quizQuestions.map((question, index) => (
+                        <div key={index} className="quiz-question">
+                            <h3>{index + 1}. {question.question}</h3>
+                            <QuizAnswerField
+                                questionType={questionType as string}
+                                index={index}
+                                onAnswerChange={handleAnswerChange}
+                                options={question.options} 
+                            />
                         </div>
                     ))}
                 </div>
-            )}
-            <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
+
+                <div className="quiz-actions">
+                    <CheckButton onClick={checkAnswers} />
+                    {isQuizChecked && <NewQuizButton />}
+                </div>
+
+                {isQuizChecked && (
+                    <div className="quiz-report">
+                        <h2>Quiz Results</h2>
+                        {quizReport.map((report, index) => (
+                            <div key={index} className={`result ${report.isCorrect ? 'correct' : 'incorrect'}`}>
+                                <p>Question: {report.question}</p>
+                                <p>Your Answer: {report.userAnswer}</p>
+                                <p>Correct Answer: {report.correctAnswer}</p>
+                                <p>Result: {report.isCorrect ? 'Correct' : 'Incorrect'}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
+            </div>
+            <div>
+                <CheckQuizHistoryButton />
+            </div> 
         </div>
     );
 };
@@ -96,9 +106,13 @@ const QuizDisplayPage = () => {
 
 
 export default function DisplayQuiz() {
+    const handleQuizHistory = (quizQuestions: any[]) => {
+        mockQuizHistory.push(quizQuestions); // this is where the user's quizzes are going to be saved in our database
+    }
+    console.log('this is the quiz history at the moment this new quiz is displayed', mockQuizHistory);
     return (
       <Suspense fallback={<div>Loading quiz...</div>}>
-        <QuizDisplayPage />
+        <QuizDisplayPage handleQuizHistory={handleQuizHistory}/>
       </Suspense>
     );
   }
