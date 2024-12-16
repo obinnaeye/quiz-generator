@@ -10,8 +10,12 @@ import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers';
 import DownloadQuiz from "../components/DownloadQuiz";
 import CheckQuizHistoryButton from '../components/CheckQuizHistoryButton';
 
+interface QuizDisplayPageProps{
+    handleQuizHistory: (quizQuestions: any[]) => void
+}
 let mockQuizHistory: any[] = [];
-const QuizDisplayPage: React.FC<{handleQuizHistory: (quizQuestions: any[]) => void}> = ({handleQuizHistory}) => {
+
+const QuizDisplayPage: React.FC<QuizDisplayPageProps> = ({handleQuizHistory}) => {
     const searchParams = useSearchParams();
     const questionType = searchParams.get('questionType') || 'multichoice';
     const numQuestions = Number(searchParams.get('numQuestions')) || 1;
@@ -58,9 +62,9 @@ const QuizDisplayPage: React.FC<{handleQuizHistory: (quizQuestions: any[]) => vo
         <>
         <div >
             <h1>{questionType} Quiz</h1>
-            <div>
+            <div className="quiz-questions">
                 {quizQuestions.map((question, index) => (
-                    <div key={index} >
+                    <div key={index} className="quiz-question">
                         <h3>{index + 1}. {question.question}</h3>
                         <QuizAnswerField
                             questionType={questionType as string}
@@ -92,9 +96,9 @@ const QuizDisplayPage: React.FC<{handleQuizHistory: (quizQuestions: any[]) => vo
             )}
             <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
         </div>
-                <div>
-                    <CheckQuizHistoryButton />
-                </div> 
+        <div>
+            <CheckQuizHistoryButton />
+        </div> 
             </>
     );
 };
