@@ -19,7 +19,6 @@ export default function QuizForm() {
   const router = useRouter()
   
     const handleGenerateQuiz = () => {
-      
     // Check if all required fields are filled out
     if (!profession || !numQuestions || !questionType) {
       setErrorMessage("Please fill in the topic, select number of questions, and choose a quiz type.");

@@ -59,47 +59,47 @@ const QuizDisplayPage: React.FC<QuizDisplayPageProps> = ({handleQuizHistory}) =>
     };
 
     return (
-        <>
-        <div >
-            <h1>{questionType} Quiz</h1>
-            <div className="quiz-questions">
-                {quizQuestions.map((question, index) => (
-                    <div key={index} className="quiz-question">
-                        <h3>{index + 1}. {question.question}</h3>
-                        <QuizAnswerField
-                            questionType={questionType as string}
-                            index={index}
-                            onAnswerChange={handleAnswerChange}
-                            options={question.options} 
-                        />
-                    </div>
-                ))}
-            </div>
-
-            <div className="quiz-actions">
-                <CheckButton onClick={checkAnswers} />
-                {isQuizChecked && <NewQuizButton />}
-            </div>
-
-            {isQuizChecked && (
-                <div className="quiz-report">
-                    <h2>Quiz Results</h2>
-                    {quizReport.map((report, index) => (
-                        <div key={index} className={`result ${report.isCorrect ? 'correct' : 'incorrect'}`}>
-                            <p>Question: {report.question}</p>
-                            <p>Your Answer: {report.userAnswer}</p>
-                            <p>Correct Answer: {report.correctAnswer}</p>
-                            <p>Result: {report.isCorrect ? 'Correct' : 'Incorrect'}</p>
+        <div className="quiz-container">
+            <div >
+                <h1>{questionType} Quiz</h1>
+                <div className="quiz-questions">
+                    {quizQuestions.map((question, index) => (
+                        <div key={index} className="quiz-question">
+                            <h3>{index + 1}. {question.question}</h3>
+                            <QuizAnswerField
+                                questionType={questionType as string}
+                                index={index}
+                                onAnswerChange={handleAnswerChange}
+                                options={question.options} 
+                            />
                         </div>
                     ))}
                 </div>
-            )}
-            <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
+
+                <div className="quiz-actions">
+                    <CheckButton onClick={checkAnswers} />
+                    {isQuizChecked && <NewQuizButton />}
+                </div>
+
+                {isQuizChecked && (
+                    <div className="quiz-report">
+                        <h2>Quiz Results</h2>
+                        {quizReport.map((report, index) => (
+                            <div key={index} className={`result ${report.isCorrect ? 'correct' : 'incorrect'}`}>
+                                <p>Question: {report.question}</p>
+                                <p>Your Answer: {report.userAnswer}</p>
+                                <p>Correct Answer: {report.correctAnswer}</p>
+                                <p>Result: {report.isCorrect ? 'Correct' : 'Incorrect'}</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
+            </div>
+            <div>
+                <CheckQuizHistoryButton />
+            </div> 
         </div>
-        <div>
-            <CheckQuizHistoryButton />
-        </div> 
-            </>
     );
 };
 
