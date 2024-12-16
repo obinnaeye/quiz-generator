@@ -10,7 +10,7 @@ import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers';
 import DownloadQuiz from "../components/DownloadQuiz";
 import CheckQuizHistoryButton from '../components/CheckQuizHistoryButton';
 
-let quizHistory: any[] = [];
+let mockQuizHistory: any[] = [];
 const QuizDisplayPage: React.FC<{handleQuizHistory: (quizQuestions: any[]) => void}> = ({handleQuizHistory}) => {
     const searchParams = useSearchParams();
     const questionType = searchParams.get('questionType') || 'multichoice';
@@ -62,12 +62,12 @@ const QuizDisplayPage: React.FC<{handleQuizHistory: (quizQuestions: any[]) => vo
                 {quizQuestions.map((question, index) => (
                     <div key={index} >
                         <h3>{index + 1}. {question.question}</h3>
-                        {/* <QuizAnswerField
+                        <QuizAnswerField
                             questionType={questionType as string}
                             index={index}
                             onAnswerChange={handleAnswerChange}
                             options={question.options} 
-                        /> */}
+                        />
                     </div>
                 ))}
             </div>
@@ -103,9 +103,9 @@ const QuizDisplayPage: React.FC<{handleQuizHistory: (quizQuestions: any[]) => vo
 
 export default function DisplayQuiz() {
     const handleQuizHistory = (quizQuestions: any[]) => {
-        quizHistory.push(quizQuestions);
+        mockQuizHistory.push(quizQuestions); // this is where the user's quizzes are going to be saved in our database
     }
-    console.log('this is the quiz history at the moment this new quiz is displayed', quizHistory);
+    console.log('this is the quiz history at the moment this new quiz is displayed', mockQuizHistory);
     return (
       <Suspense fallback={<div>Loading quiz...</div>}>
         <QuizDisplayPage handleQuizHistory={handleQuizHistory}/>

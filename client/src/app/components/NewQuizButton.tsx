@@ -4,7 +4,6 @@ export default function NewQuizButton() {
   const router = useRouter();
 
   const handleClick = () => {
-    console.log('just clicked on new Quiz');
     router.push('/'); 
   };
 

@@ -1,17 +1,34 @@
-import { mockMultipleChoiceQuestions } from "../components/MockMultipleChoiceQuestions";
+import { mockQuizHistory } from "./MockQuizHistory";
 
 export default function DisplayQuizHistory(){
-    const quizHistory = mockMultipleChoiceQuestions.map((question, index) => {
-        return (
-            <div key={index}>
-                <h2>{index + 1}. {question.question}</h2>
-                <ul>
-                    {question.options.map((option, index) => (<li key= {index}>*{option}</li>))}
-                </ul>
-                <h2>Answer: {question.answer}</h2>
-            </div>
-        )
-    });
+    const quizHistory = mockQuizHistory.map((quiz, index) => {
+            const quiznumber = index + 1;
+
+            return (
+                    <>
+                        <hr/>
+                        <div key= {index}>Quiz: {quiznumber}</div>
+                        <div>
+                            {quiz.map((question, index) => {
+                            let optionsLine;
+                            if("options" in question){
+                                optionsLine = <ul>
+                                                    {question.options.map((option, index) => (<li key= {index}>*{option}</li>))}
+                                                </ul>
+                            }
+                                return (
+                                    <div key={index}>
+                                        <h2>{index + 1}. {question.question}</h2>
+                                        {optionsLine}
+                                        <h2>Answer: {question.answer}</h2>
+                                    </div>
+                                );
+                        })}
+                    </div>
+                </>
+            )
+            
+    }); 
 
     return (
         <div>
