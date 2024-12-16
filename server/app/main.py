@@ -17,8 +17,15 @@ from reportlab.lib.pagesizes import letter
 
 from .mock_quiz_data import quiz_data_multiple_choice, quiz_data_true_false, quiz_data_open_ended
 
+from app.db.core.connection import database
+from app.routes import router as app_router
+
+
+
 
 app = FastAPI()
+
+app.include_router(app_router)
 
 
 def generate_txt(data: List[dict]):
@@ -102,7 +109,7 @@ def generate_docx(data: List[dict]):
     return buffer
 
 
-app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
+# app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 
 @app.get("/api")
 def read_root():
