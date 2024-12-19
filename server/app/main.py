@@ -1,106 +1,24 @@
 from fastapi import FastAPI, Query, HTTPException
 from app.api import healthcheck
-from enum import Enum
-from pydantic import BaseModel, EmailStr
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-
 from fastapi.responses import StreamingResponse
-from io import StringIO, BytesIO
-import csv
-from typing import List
-import json
-from reportlab.pdfgen import canvas
-from docx import Document
-
-from reportlab.lib.pagesizes import letter
-
+from .app_store import (
+    generate_csv,
+    generate_docx,
+    generate_pdf,
+    generate_txt,
+)
+from libs.model import (
+    UserModel,
+    LoginRequestModel,
+    LoginResponseModel,
+)
+from libs.query import (
+    GenerateQuizQuery,
+)
 from .mock_quiz_data import quiz_data_multiple_choice, quiz_data_true_false, quiz_data_open_ended
 
-
 app = FastAPI()
-
-
-def generate_txt(data: List[dict]):
-    buffer = StringIO()
-    for item in data:
-        buffer.write(f"Question: {item['question']}\n")
-        if 'options' in item:
-            buffer.write("Options: " + ", ".join(item['options']) + "\n")
-        buffer.write(f"Answer: {item['answer']}\n\n")
-    buffer.seek(0)
-    return buffer
-
-def generate_csv(data: List[dict]):
-    buffer = StringIO()
-    writer = csv.writer(buffer)
-    writer.writerow(["Question", "Options", "Answer"])
-    for item in data:
-        options = ", ".join(item.get("options", []))
-        writer.writerow([item["question"], options, item["answer"]])
-    buffer.seek(0)
-    return buffer
-
-def generate_pdf(data: List[dict]):
-    buffer = BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=letter)
-    page_width, page_height = letter
-    margin = 50  
-    line_width = page_width - (2 * margin) 
-    y_position = page_height - 50 
-
-    for item in data:
-        question = f"Question: {item['question']}"
-        y_position = draw_wrapped_text(pdf, question, margin, y_position, line_width)
-
-        if 'options' in item:
-            options = "Options: " + ", ".join(item['options'])
-            y_position = draw_wrapped_text(pdf, options, margin, y_position, line_width)
-
-        answer = f"Answer: {item['answer']}"
-        y_position = draw_wrapped_text(pdf, answer, margin, y_position, line_width)
-
-        y_position -= 20
-
-        if y_position < 50:
-            pdf.showPage()
-            y_position = page_height - 50
-
-    pdf.save()
-    buffer.seek(0)
-    return buffer
-
-def draw_wrapped_text(pdf, text, x, y, max_width, line_height=15):
-    words = text.split()
-    line = ""
-    for word in words:
-        if pdf.stringWidth(line + word + " ", "Helvetica", 12) <= max_width:
-            line += word + " "
-        else:
-            pdf.drawString(x, y, line.strip())
-            y -= line_height
-            line = word + " "
-
-    if line:
-        pdf.drawString(x, y, line.strip())
-        y -= line_height
-
-    return y
-
-
-def generate_docx(data: List[dict]):
-    buffer = BytesIO()
-    doc = Document()
-    for item in data:
-        doc.add_paragraph(f"Question: {item['question']}")
-        if 'options' in item:
-            doc.add_paragraph("Options: " + ", ".join(item['options']))
-        doc.add_paragraph(f"Answer: {item['answer']}")
-        doc.add_paragraph("")  
-    doc.save(buffer)
-    buffer.seek(0)
-    return buffer
-
 
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 
@@ -108,26 +26,11 @@ app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 def read_root():
     return {"message": "Welcome to the Quiz App API!"}
 
-
-class User(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
-
-class LoginRequest(BaseModel):
-    username_or_email: str
-    password: str
-
-class LoginResponse(BaseModel):
-    message: str
-    user: User
-
-mock_db: list[User] = []
-
+mock_db: list[UserModel] = []
 
 # The Register functionality
-@app.post("/register/", response_model=User)
-def create_user(user:User):
+@app.post("/register/", response_model=UserModel)
+def create_user(user:UserModel):
     if any(existing_user.username == user.username for existing_user in mock_db):
         raise HTTPException(status_code=400, detail="Username already taken")
 
@@ -138,14 +41,12 @@ def create_user(user:User):
     return user
 
 # List all the users
-@app.get("/users/", response_model=list[User])
+@app.get("/users/", response_model=list[UserModel])
 def list_users():
     return mock_db
 
-
-
-@app.post("/login/", response_model=LoginResponse)
-def login(request: LoginRequest):  
+@app.post("/login/", response_model=LoginResponseModel)
+def login(request: LoginRequestModel):  
     user = next((u for u in mock_db if (u.username == request.username_or_email or u.email == request.username_or_email) and u.password == request.password), None)
 
     if user is None:
@@ -166,25 +67,19 @@ app.add_middleware(
 # def generate_quiz():
 #     return {"message": "quiz generated"}
 
-
-
-
-
 @app.get("/generate-quiz")
-def generate_quiz(
-    question_type: str = Query(..., description="Type of questions requested (multichoice, true-false, open-ended)"),
-    numQuestion: int = Query(..., description="Number of questions requested", ge=1)
-):
-    if question_type == "multichoice":
+async def generate_quiz(query: GenerateQuizQuery = Query(...)):
+    if query.question_type == "multichoice":
         questions = quiz_data_multiple_choice
-    elif question_type == "true-false":
+    elif query.question_type == "true-false":
         questions = quiz_data_true_false
-    elif question_type == "open-ended":
+    elif query.question_type == "open-ended":
         questions = quiz_data_open_ended
     else:
         raise HTTPException(status_code=400, detail="Invalid question type")
 
-    return {"quiz_data": questions[:numQuestion]}
+    print('a call was made to the generate-quiz method with these params', {query.question_type, query.num_question})
+    return {"quiz_data": questions[:query.num_question]}
 
 
 @app.get("/download-quiz/")

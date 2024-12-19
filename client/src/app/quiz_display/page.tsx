@@ -1,30 +1,31 @@
 "use client";
 
 import React, { useState, Suspense } from 'react';
-import { determineQuizDisplay } from '../components/determineQuizDisplay';
-import CheckButton from '../components/CheckButton';
-import NewQuizButton from '../components/NewQuizButton';
-import QuizAnswerField from '../components/QuizAnswerField';
 import { useSearchParams } from 'next/navigation';
-import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers';
-import DownloadQuiz from "../components/DownloadQuiz";
-import CheckQuizHistoryButton from '../components/CheckQuizHistoryButton';
+import { useEffect } from 'react';
+import { determineQuizDisplay, gradeSpecificQuestion } from '../app-store/functions';
+import { 
+    CheckButton, 
+    CheckQuizHistoryButton, 
+    DownloadQuiz, 
+    NewQuizButton, 
+    QuizAnswerField 
+} from '../components';
 
 interface QuizDisplayPageProps{
-    handleQuizHistory: (quizQuestions: any[]) => void
+    handleQuizHistory: (quizQuestions: any[]) => void,
+    questionType: string,
+    numQuestions: number,
+    quizQuestions: any[]
 }
 let mockQuizHistory: any[] = [];
 
-const QuizDisplayPage: React.FC<QuizDisplayPageProps> = ({handleQuizHistory}) => {
-    const searchParams = useSearchParams();
-    const questionType = searchParams.get('questionType') || 'multichoice';
-    const numQuestions = Number(searchParams.get('numQuestions')) || 1;
+const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({handleQuizHistory, questionType, numQuestions, quizQuestions}) => {
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
     const [quizReport, setQuizReport] = useState<any[]>([]);
 
-    const quizQuestions = determineQuizDisplay(questionType as string, Number(numQuestions)) || [];
-
+    console.log('this is are the questionType and numQuestions in the quizDisplayPage', questionType, numQuestions);
     const handleAnswerChange = (index: number, answer: string) => {
         const updatedAnswers = [...userAnswers];
         updatedAnswers[index] = answer;
@@ -103,16 +104,49 @@ const QuizDisplayPage: React.FC<QuizDisplayPageProps> = ({handleQuizHistory}) =>
     );
 };
 
-
-
 export default function DisplayQuiz() {
+    const searchParams = useSearchParams();
+    const [quizParams, setQuizParams] = useState({
+        questionType: "multichoice",
+        numQuestions: 1
+    });
+    const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+   
+    useEffect(() => {
+        const questionType = searchParams.get("questionType") || "multichoice";
+        const numQuestionsString = searchParams.get("numQuestions") || "1";
+        const numQuestions = parseInt(numQuestionsString, 10); // 10 for decimal
+        setQuizParams({
+            questionType,
+            numQuestions
+        });
+        console.log('these are the seachParams', {
+            questionType,
+            numQuestions
+        });
+
+
+        const fetchQuizQuestions = async () => {
+            try {
+                const questions = await determineQuizDisplay(questionType, numQuestions);
+                console.log('this are the questions inside the fetchQuizQuestions', questions);
+                setQuizQuestions(questions);
+            } catch (error){
+                console.error({message: "error fectching quiz questions", error});
+                console.log({message: "error fectching quiz questions", error});
+
+            }
+        };
+        fetchQuizQuestions();
+    }, [searchParams]);
+
     const handleQuizHistory = (quizQuestions: any[]) => {
         mockQuizHistory.push(quizQuestions); // this is where the user's quizzes are going to be saved in our database
     }
     console.log('this is the quiz history at the moment this new quiz is displayed', mockQuizHistory);
     return (
       <Suspense fallback={<div>Loading quiz...</div>}>
-        <QuizDisplayPage handleQuizHistory={handleQuizHistory}/>
+        <QuizDisplayPage quizQuestions={quizQuestions} questionType={quizParams.questionType} numQuestions={quizParams.numQuestions} handleQuizHistory={handleQuizHistory}/>
       </Suspense>
     );
   }

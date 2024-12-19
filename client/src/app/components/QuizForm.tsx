@@ -7,8 +7,7 @@ import { useRouter } from 'next/navigation';
 
 
 export default function QuizForm() {
-  const [question, setQuestion] = useState("");
-  const [quizStatus, setQuizStatus] = useState("");
+  // const [quizStatus, setQuizStatus] = useState("");
   
   
   const [profession,setProfession,] = useState("");
@@ -34,7 +33,7 @@ export default function QuizForm() {
 
     // Call the FastAPI endpoint here and set quizStatus to "Quiz generated"
     // (Replace with actual API call)
-    setQuizStatus("Quiz generated");
+    // setQuizStatus("Quiz generated");
     router.push(`/quiz_display?${queryParams}`);
   };
 
@@ -51,8 +50,8 @@ export default function QuizForm() {
         difficultyLevel={difficultyLevel}
         setDifficultyLevel={setDifficultyLevel}
       />
-      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>} {/* Error message display */}
-      <GenerateButton onClick={handleGenerateQuiz} /> {/* Pass function to the button */}
+      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+      <GenerateButton onClick={handleGenerateQuiz} />
     </form>
   );
 }

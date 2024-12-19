@@ -54,7 +54,7 @@ PORT=8000
 Start the FastAPI server with the following command:
 
 ```bash
-fastapi dev app/main.py
+pipenv run fastapi dev app/main.py
 ```
 
 The API will be accessible at `http://localhost:8000/api`.

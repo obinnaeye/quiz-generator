@@ -1,4 +1,3 @@
-// components/DownloadQuiz.tsx
 import { useState } from 'react';
 import axios from 'axios';
 import { Observable } from 'rxjs';
