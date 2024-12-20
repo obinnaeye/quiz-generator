@@ -7,3 +7,4 @@ export * from "./grade-specific-question";
 export * from "./is-answer-similar";
 export * from "./levenshtein-distance";
 export * from "./shuffle-array";
+export * from "./get-user-quiz-history";

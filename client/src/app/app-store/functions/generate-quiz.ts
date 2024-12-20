@@ -16,6 +16,6 @@ export const generateQuiz = async (userId: string, questionType: string, numQues
         console.log('this is the data out of axios', data);
         return data.quiz_data;
     } catch (error) {
-        console.error({message: "Error retrieving data from server", error: error});
+        console.error({message: "Error retrieving quiz questions from server", error: error});
     } 
 }

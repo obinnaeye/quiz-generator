@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Query, HTTPException
 from app.api import healthcheck
 from fastapi.middleware.cors import CORSMiddleware
-from .app_store.functions import (
+from .app_store import (
     download_quiz,
-    generate_quiz
+    generate_quiz,
+    get_user_quiz_history
 )
 from libs.model import (
     UserModel,
@@ -13,6 +14,9 @@ from libs.model import (
 from libs.query import (
     GenerateQuizQuery,
     DownloadQuizQuery
+)
+from libs import (
+    GetUserQuizHistoryQuery
 )
 
 app = FastAPI()
@@ -67,6 +71,10 @@ app.add_middleware(
 @app.get("/generate-quiz")
 async def generate_quiz_handler(query: GenerateQuizQuery = Query(...)):
     return generate_quiz(query.user_id, query.question_type, query.num_question)
+
+@app.get("/get-user-quiz-history")
+def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Query(...)):
+    return get_user_quiz_history(query.user_id)
 
 @app.get("/download-quiz")
 async def download_quiz_handler(query: DownloadQuizQuery = Query(...)):

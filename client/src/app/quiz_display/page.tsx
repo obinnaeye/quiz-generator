@@ -13,15 +13,13 @@ import {
 } from '../components';
 
 interface QuizDisplayPageProps{
-    handleQuizHistory: (quizQuestions: any[]) => void,
     userId: string,
     questionType: string,
     numQuestions: number,
     quizQuestions: any[]
 }
-let mockQuizHistory: any[] = [];
 
-const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({handleQuizHistory, userId, questionType, numQuestions, quizQuestions}) => {
+const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({userId, questionType, numQuestions, quizQuestions}) => {
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
     const [quizReport, setQuizReport] = useState<any[]>([]);
@@ -55,7 +53,6 @@ const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({handleQuizHistory, us
                 isCorrect,
             };
         });
-        handleQuizHistory(quizQuestions);
         setQuizReport(report);
         setIsQuizChecked(true);
     };
@@ -136,20 +133,21 @@ export default function DisplayQuiz() {
                 console.log('this are the questions inside the fetchQuizQuestions', questions);
                 setQuizQuestions(questions);
             } catch (error){
-                console.log({message: "error fectching quiz questions", error});
+                console.error({message: "error fectching quiz questions", error});
 
             }
         };
         fetchQuizQuestions();
     }, [searchParams]);
 
-    const handleQuizHistory = (quizQuestions: any[]) => {
-        mockQuizHistory.push(quizQuestions); // this is where the user's quizzes are going to be saved in our database
-    }
-    console.log('this is the quiz history at the moment this new quiz is displayed', mockQuizHistory);
     return (
       <Suspense fallback={<div>Loading quiz...</div>}>
-        <QuizDisplayPage quizQuestions={quizQuestions} userId={quizParams.userId} questionType={quizParams.questionType} numQuestions={quizParams.numQuestions} handleQuizHistory={handleQuizHistory}/>
+        <QuizDisplayPage 
+            quizQuestions={quizQuestions} 
+            userId={quizParams.userId} 
+            questionType={quizParams.questionType}
+            numQuestions={quizParams.numQuestions} 
+        />
       </Suspense>
     );
   }
