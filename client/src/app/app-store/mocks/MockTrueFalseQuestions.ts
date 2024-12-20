@@ -1,5 +1,3 @@
-
-
 export const mockTrueFalseQuestions = [
     {
         question: 'The Earth is flat.',

@@ -24,7 +24,6 @@ const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({userId, questionType,
     const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
     const [quizReport, setQuizReport] = useState<any[]>([]);
 
-    console.log('this is are the questionType and numQuestions in the quizDisplayPage', questionType, numQuestions);
     const handleAnswerChange = (index: number, answer: string) => {
         const updatedAnswers = [...userAnswers];
         updatedAnswers[index] = answer;
@@ -121,19 +120,13 @@ export default function DisplayQuiz() {
             questionType,
             numQuestions
         });
-        console.log('these are the seachParams', {
-            questionType,
-            numQuestions
-        });
-
 
         const fetchQuizQuestions = async () => {
             try {
                 const questions = await determineQuizDisplay(userId, questionType, numQuestions);
-                console.log('this are the questions inside the fetchQuizQuestions', questions);
                 setQuizQuestions(questions);
             } catch (error){
-                console.error({message: "error fectching quiz questions", error});
+                console.error({message: "error fetching quiz questions", error});
 
             }
         };

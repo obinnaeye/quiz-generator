@@ -13,7 +13,7 @@ interface downloadQuizProps {
 export default function DownloadQuiz ({userId, question_type, numQuestion}: downloadQuizProps ) {
   const [selectedFormat, setSelectedFormat] = useState<FileFormat>('txt');
   const [isDownloading, setIsDownloading] = useState(false);
-  console.log('I am inside the download quiz and here is the userId', userId);
+  
   const handleFormatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedFormat(event.target.value as FileFormat);
   };

@@ -1,7 +1,8 @@
+import { GeneratedQuizModel } from "@/libs/models";
 import axios, { AxiosResponse } from "axios";
 
 export const generateQuiz = async (userId: string, questionType: string, numQuestion: number) => {
-    let data: {quiz_data: any[]};
+    let data: {quiz_data: GeneratedQuizModel[]};
 
     try {
         const axiosOutput: AxiosResponse<any, any> =  await axios.get(`http://localhost:8000/generate-quiz`, {
@@ -12,8 +13,8 @@ export const generateQuiz = async (userId: string, questionType: string, numQues
                 num_question: numQuestion,
             }
         });
-        ({ data } = axiosOutput)
-        console.log('this is the data out of axios', data);
+        ({ data } = axiosOutput);
+
         return data.quiz_data;
     } catch (error) {
         console.error({message: "Error retrieving quiz questions from server", error: error});

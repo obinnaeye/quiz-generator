@@ -10,8 +10,8 @@ export const getUserQuizHistory = async (userId: string) => {
                 user_id: userId,
             }
         });
-        ({ data } = axiosOutput)
-        console.log('this is the data out of axios in the client', data);
+        ({ data } = axiosOutput);
+
         return data;
     } catch (error) {
         console.error({message: "Error retrieving user quiz history from server", userId, error: error});

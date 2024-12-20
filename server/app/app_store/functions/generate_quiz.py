@@ -18,6 +18,5 @@ def generate_quiz(user_id: str, question_type: str, num_question: int):
 
     data = questions[:num_question]
     update_quiz_history(user_id, data)
-    # print('a call was made to the generate-quiz method with these params', {question_type, num_question})
-    # print('generate-quiz method with the data for update', data)
+    
     return {"quiz_data": data}

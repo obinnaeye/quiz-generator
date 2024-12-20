@@ -8,8 +8,6 @@ import { useRouter } from 'next/navigation';
 
 export default function QuizForm() {
   // const [quizStatus, setQuizStatus] = useState("");
-    
-    
   const [profession,setProfession,] = useState("");
   const [numQuestions,setNumQuestions,] = useState(1);
   const [questionType,setQuestionType,] = useState("multichoice");
