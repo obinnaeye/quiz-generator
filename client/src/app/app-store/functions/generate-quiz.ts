@@ -1,14 +1,15 @@
 import axios, { AxiosResponse } from "axios";
 
-export const generateQuiz = async (questionType: string, numQuestion: number) => {
+export const generateQuiz = async (userId: string, questionType: string, numQuestion: number) => {
     let data: {quiz_data: any[]};
 
     try {
         const axiosOutput: AxiosResponse<any, any> =  await axios.get(`http://localhost:8000/generate-quiz`, {
             responseType: 'json',
             params: {
-              question_type: questionType,
-              num_question: numQuestion,
+                user_id: userId,
+                question_type: questionType,
+                num_question: numQuestion,
             }
         });
         ({ data } = axiosOutput)

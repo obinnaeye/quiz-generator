@@ -14,13 +14,14 @@ import {
 
 interface QuizDisplayPageProps{
     handleQuizHistory: (quizQuestions: any[]) => void,
+    userId: string,
     questionType: string,
     numQuestions: number,
     quizQuestions: any[]
 }
 let mockQuizHistory: any[] = [];
 
-const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({handleQuizHistory, questionType, numQuestions, quizQuestions}) => {
+const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({handleQuizHistory, userId, questionType, numQuestions, quizQuestions}) => {
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
     const [quizReport, setQuizReport] = useState<any[]>([]);
@@ -95,7 +96,7 @@ const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({handleQuizHistory, qu
                         ))}
                     </div>
                 )}
-                <DownloadQuiz question_type={questionType} numQuestion={numQuestions} />
+                <DownloadQuiz userId={userId} question_type={questionType} numQuestion={numQuestions} />
             </div>
             <div>
                 <CheckQuizHistoryButton />
@@ -107,6 +108,7 @@ const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({handleQuizHistory, qu
 export default function DisplayQuiz() {
     const searchParams = useSearchParams();
     const [quizParams, setQuizParams] = useState({
+        userId: "fakeId",
         questionType: "multichoice",
         numQuestions: 1
     });
@@ -115,8 +117,10 @@ export default function DisplayQuiz() {
     useEffect(() => {
         const questionType = searchParams.get("questionType") || "multichoice";
         const numQuestionsString = searchParams.get("numQuestions") || "1";
+        const userId = searchParams.get("userId") || "fakeId";
         const numQuestions = parseInt(numQuestionsString, 10); // 10 for decimal
         setQuizParams({
+            userId,
             questionType,
             numQuestions
         });
@@ -128,11 +132,10 @@ export default function DisplayQuiz() {
 
         const fetchQuizQuestions = async () => {
             try {
-                const questions = await determineQuizDisplay(questionType, numQuestions);
+                const questions = await determineQuizDisplay(userId, questionType, numQuestions);
                 console.log('this are the questions inside the fetchQuizQuestions', questions);
                 setQuizQuestions(questions);
             } catch (error){
-                console.error({message: "error fectching quiz questions", error});
                 console.log({message: "error fectching quiz questions", error});
 
             }
@@ -146,7 +149,7 @@ export default function DisplayQuiz() {
     console.log('this is the quiz history at the moment this new quiz is displayed', mockQuizHistory);
     return (
       <Suspense fallback={<div>Loading quiz...</div>}>
-        <QuizDisplayPage quizQuestions={quizQuestions} questionType={quizParams.questionType} numQuestions={quizParams.numQuestions} handleQuizHistory={handleQuizHistory}/>
+        <QuizDisplayPage quizQuestions={quizQuestions} userId={quizParams.userId} questionType={quizParams.questionType} numQuestions={quizParams.numQuestions} handleQuizHistory={handleQuizHistory}/>
       </Suspense>
     );
   }

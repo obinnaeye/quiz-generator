@@ -1,12 +1,9 @@
 from fastapi import FastAPI, Query, HTTPException
 from app.api import healthcheck
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
-from .app_store import (
-    generate_csv,
-    generate_docx,
-    generate_pdf,
-    generate_txt,
+from .app_store.functions import (
+    download_quiz,
+    generate_quiz
 )
 from libs.model import (
     UserModel,
@@ -15,8 +12,8 @@ from libs.model import (
 )
 from libs.query import (
     GenerateQuizQuery,
+    DownloadQuizQuery
 )
-from .mock_quiz_data import quiz_data_multiple_choice, quiz_data_true_false, quiz_data_open_ended
 
 app = FastAPI()
 
@@ -68,54 +65,9 @@ app.add_middleware(
 #     return {"message": "quiz generated"}
 
 @app.get("/generate-quiz")
-async def generate_quiz(query: GenerateQuizQuery = Query(...)):
-    if query.question_type == "multichoice":
-        questions = quiz_data_multiple_choice
-    elif query.question_type == "true-false":
-        questions = quiz_data_true_false
-    elif query.question_type == "open-ended":
-        questions = quiz_data_open_ended
-    else:
-        raise HTTPException(status_code=400, detail="Invalid question type")
+async def generate_quiz_handler(query: GenerateQuizQuery = Query(...)):
+    return generate_quiz(query.user_id, query.question_type, query.num_question)
 
-    print('a call was made to the generate-quiz method with these params', {query.question_type, query.num_question})
-    return {"quiz_data": questions[:query.num_question]}
-
-
-@app.get("/download-quiz/")
-async def download_quiz(
-    format: str = Query("txt", description="File format for the quiz data (txt, csv, pdf, etc.)"),
-    type: str = Query("multichoice", description="Type of questions requested (multichoice, true-false, open-ended)"),
-    numQuestion: int = Query(..., description="Number of questions to include in the download", ge=1)
-):
-    if type == "multichoice":
-        quiz_data = quiz_data_multiple_choice
-    elif type == "true-false":
-        quiz_data = quiz_data_true_false
-    elif type == "open-ended":
-        quiz_data = quiz_data_open_ended
-    else:
-        raise HTTPException(status_code=400, detail="Unsupported question_type")
-
-    sliced_quiz_data = quiz_data[:numQuestion]
-    
-    if format == "txt":
-        buffer = generate_txt(sliced_quiz_data)
-        content_type = "text/plain"
-    elif format == "csv":
-        buffer = generate_csv(sliced_quiz_data)
-        content_type = "text/csv"
-    elif format == "pdf":
-        buffer = generate_pdf(sliced_quiz_data)
-        content_type = "application/pdf"
-    elif format == "docx":
-        buffer = generate_docx(sliced_quiz_data)
-        content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    else:
-        raise HTTPException(status_code=400, detail="Unsupported file format")
-
-    return StreamingResponse(
-        buffer, media_type=content_type, headers={
-            "Content-Disposition": f"attachment; filename=quiz_data.{format}"
-        }
-    )
+@app.get("/download-quiz")
+async def download_quiz_handler(query: DownloadQuizQuery = Query(...)):
+    return download_quiz(query.format, query.question_type, query.num_question)

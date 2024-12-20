@@ -1,1 +1,2 @@
 from .generate_quiz_query import GenerateQuizQuery
+from .download_quiz_query import DownloadQuizQuery
