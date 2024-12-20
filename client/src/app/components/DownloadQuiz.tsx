@@ -1,4 +1,3 @@
-// components/DownloadQuiz.tsx
 import { useState } from 'react';
 import axios from 'axios';
 import { Observable } from 'rxjs';
@@ -6,14 +5,15 @@ import { Observable } from 'rxjs';
 type FileFormat = 'txt' | 'csv' | 'pdf' | 'docx';
 
 interface downloadQuizProps {
-    question_type: string,
-    numQuestion: number
+  userId: string,
+  question_type: string,
+  numQuestion: number
 }
 
-export default function DownloadQuiz ({question_type, numQuestion}: downloadQuizProps ) {
+export default function DownloadQuiz ({userId, question_type, numQuestion}: downloadQuizProps ) {
   const [selectedFormat, setSelectedFormat] = useState<FileFormat>('txt');
   const [isDownloading, setIsDownloading] = useState(false);
-
+  
   const handleFormatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedFormat(event.target.value as FileFormat);
   };
@@ -25,12 +25,14 @@ export default function DownloadQuiz ({question_type, numQuestion}: downloadQuiz
         .get(`http://localhost:8000/download-quiz`, {
           responseType: 'blob',
           params: {
+            user_id: userId,
             format: selectedFormat,
             type: question_type,
-            numQuestion,
+            num_question: numQuestion,
           }
         })
         .then((response) => {
+          console.log('this is the response inside the axios body', response);
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;
@@ -91,4 +93,3 @@ export default function DownloadQuiz ({question_type, numQuestion}: downloadQuiz
     </div>
   );
 };
-
