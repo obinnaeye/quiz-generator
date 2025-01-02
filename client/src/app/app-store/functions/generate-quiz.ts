@@ -1,7 +1,7 @@
 import { GeneratedQuizModel } from "@/libs/models";
 import axios, { AxiosResponse } from "axios";
 
-export const generateQuiz = async (userId: string, questionType: string, numQuestion: number) => {
+export const generateQuiz = async (userId: string, questionType: string, numQuestion: number): Promise<GeneratedQuizModel[] | undefined> => {
     let data: {quiz_data: GeneratedQuizModel[]};
 
     try {

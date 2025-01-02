@@ -74,5 +74,5 @@ export const mockTrueFalseQuestions = [
         options: ['true', 'false'],
         answer: "true"
     },
-  ];
+];
   

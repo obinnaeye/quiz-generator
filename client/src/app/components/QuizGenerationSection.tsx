@@ -1,13 +1,5 @@
-interface QuizGenerationSectionProps {
-  profession: string;
-  setProfession: (value: string) => void;
-  numQuestions: number;
-  setNumQuestions: (value: number) => void;
-  questionType: string;
-  setQuestionType: (value: string) => void;
-  difficultyLevel: string;
-  setDifficultyLevel: (value: string) => void;
-}
+import { QuizGenerationSectionProps } from "@/libs/props";
+
 
 export default function QuizGenerationSection({
   profession,

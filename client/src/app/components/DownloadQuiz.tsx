@@ -13,7 +13,7 @@ interface downloadQuizProps {
 export default function DownloadQuiz ({userId, question_type, numQuestion}: downloadQuizProps ) {
   const [selectedFormat, setSelectedFormat] = useState<FileFormat>('txt');
   const [isDownloading, setIsDownloading] = useState(false);
-  
+
   const handleFormatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedFormat(event.target.value as FileFormat);
   };
@@ -32,7 +32,6 @@ export default function DownloadQuiz ({userId, question_type, numQuestion}: down
           }
         })
         .then((response) => {
-          console.log('this is the response inside the axios body', response);
           const url = window.URL.createObjectURL(new Blob([response.data]));
           const link = document.createElement('a');
           link.href = url;

@@ -1,4 +1,4 @@
-export const shuffleArray = <T>(array: T[] | undefined) => {
+export const shuffleArray = <GeneratedQuizModel>(array: GeneratedQuizModel[] | undefined): GeneratedQuizModel[] | [] => {
     if(array != undefined) {
       return array
        .map(value => ({ value, sort: Math.random() }))

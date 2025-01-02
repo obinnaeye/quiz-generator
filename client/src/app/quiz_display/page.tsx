@@ -11,13 +11,8 @@ import {
     NewQuizButton, 
     QuizAnswerField 
 } from '../components';
-
-interface QuizDisplayPageProps{
-    userId: string,
-    questionType: string,
-    numQuestions: number,
-    quizQuestions: any[]
-}
+import { GeneratedQuizModel } from '@/libs/models';
+import { QuizDisplayPageProps } from '@/libs/props';
 
 const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({userId, questionType, numQuestions, quizQuestions}) => {
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
@@ -123,13 +118,14 @@ export default function DisplayQuiz() {
 
         const fetchQuizQuestions = async () => {
             try {
-                const questions = await determineQuizDisplay(userId, questionType, numQuestions);
+                const questions: GeneratedQuizModel[] = await determineQuizDisplay(userId, questionType, numQuestions);
                 setQuizQuestions(questions);
             } catch (error){
                 console.error({message: "error fetching quiz questions", error});
 
             }
         };
+        
         fetchQuizQuestions();
     }, [searchParams]);
 

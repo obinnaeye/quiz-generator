@@ -1,5 +1,3 @@
-// src/app/components/SignInButton.tsx
-
 import { useState } from "react";
 import SignInModal from "./SignInModal";
 

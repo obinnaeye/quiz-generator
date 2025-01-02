@@ -3,20 +3,12 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { getUserQuizHistory } from "../app-store";
 import { useSearchParams } from "next/navigation";
-
-interface DisplayQuizHistoryPageProps {
-    quizHistory: any[]
-}
-interface QuizQuestions {
-    question: string,
-    options?: string[],
-    answer: string
-}
-type Quiz = QuizQuestions[];
+import { GeneratedQuizModel } from "@/libs/models";
+import { DisplayQuizHistoryPageProps } from "@/libs/props";
 
 const determineQuizHistoryDisplay = async(userId: string) => {
 
-    const quizHistory: Quiz[] | undefined = await getUserQuizHistory(userId);
+    const quizHistory: GeneratedQuizModel[][] | undefined = await getUserQuizHistory(userId);
     if(quizHistory != undefined) {
 
         const rearrangedHistory = quizHistory.map((quiz, index) => {
