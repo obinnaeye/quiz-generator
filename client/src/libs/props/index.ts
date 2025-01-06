@@ -6,3 +6,4 @@ export * from "./quiz-generation-section-props";
 export * from "./sign-in-modal-props";
 export * from "./sign-up-modal-props";
 export * from "./quiz-display-page-props";
+export * from "./download-quiz-props";

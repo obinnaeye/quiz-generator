@@ -19,4 +19,4 @@ def generate_quiz(user_id: str, question_type: str, num_question: int):
     data = questions[:num_question]
     update_quiz_history(user_id, data)
     
-    return {"quiz_data": data}
+    return { "sucess": "Quiz generated", "quiz_data": data }

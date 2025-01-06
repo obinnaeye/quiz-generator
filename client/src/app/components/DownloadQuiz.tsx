@@ -1,16 +1,12 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Observable } from 'rxjs';
+import { QueryPattern } from '@/libs/patterns';
+import { DownloadQuizProps } from '@/libs/props';
 
 type FileFormat = 'txt' | 'csv' | 'pdf' | 'docx';
 
-interface downloadQuizProps {
-  userId: string,
-  question_type: string,
-  numQuestion: number
-}
-
-export default function DownloadQuiz ({userId, question_type, numQuestion}: downloadQuizProps ) {
+export default function DownloadQuiz ({userId, question_type, numQuestion}: DownloadQuizProps ) {
   const [selectedFormat, setSelectedFormat] = useState<FileFormat>('txt');
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -25,6 +21,7 @@ export default function DownloadQuiz ({userId, question_type, numQuestion}: down
         .get(`http://localhost:8000/download-quiz`, {
           responseType: 'blob',
           params: {
+            pattern: QueryPattern.DownloadQuiz,
             user_id: userId,
             format: selectedFormat,
             type: question_type,

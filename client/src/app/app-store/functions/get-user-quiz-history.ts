@@ -1,4 +1,5 @@
 import { GeneratedQuizModel } from "@/libs/models";
+import { QueryPattern } from "@/libs/patterns";
 import axios, { AxiosResponse } from "axios";
 
 export const getUserQuizHistory = async (userId: string): Promise<GeneratedQuizModel[][] | undefined> => {
@@ -8,6 +9,7 @@ export const getUserQuizHistory = async (userId: string): Promise<GeneratedQuizM
         const axiosOutput: AxiosResponse<any, any> =  await axios.get(`http://localhost:8000/get-user-quiz-history`, {
             responseType: 'json',
             params: {
+                pattern: QueryPattern.GetUserQuizHistory,
                 user_id: userId,
             }
         });

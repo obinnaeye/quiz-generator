@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Query, HTTPException
 from app.api import healthcheck
+import logging
 from fastapi.middleware.cors import CORSMiddleware
 from .app_store import (
     download_quiz,
@@ -19,12 +20,23 @@ from libs import (
     GetUserQuizHistoryQuery
 )
 
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
+)
+
 app = FastAPI()
 
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
+logger = logging.getLogger(__name__)
 
 @app.get("/api")
 def read_root():
+    logger.info("Root endpoint accessed")
     return {"message": "Welcome to the Quiz App API!"}
 
 mock_db: list[UserModel] = []
@@ -64,18 +76,17 @@ app.add_middleware(
     allow_headers=["*"],  # Allow all headers
 )
 
-# @app.get("/api/generate-quiz")
-# def generate_quiz():
-#     return {"message": "quiz generated"}
-
 @app.get("/generate-quiz")
 async def generate_quiz_handler(query: GenerateQuizQuery = Query(...)):
+    logger.info("Received query: %s" % query)
     return generate_quiz(query.user_id, query.question_type, query.num_question)
 
 @app.get("/get-user-quiz-history")
 def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Query(...)):
+    logger.info("Received query: %s" % query)
     return get_user_quiz_history(query.user_id)
 
 @app.get("/download-quiz")
 async def download_quiz_handler(query: DownloadQuizQuery = Query(...)):
+    logger.info("Received query: %s" % query)
     return download_quiz(query.format, query.question_type, query.num_question)
