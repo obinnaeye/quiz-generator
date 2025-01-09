@@ -24,27 +24,39 @@ async def get_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_id: str):
         return None 
 
 
-async def update_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_id: str, update_data: dict):
+async def update_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_id: str, update_data: Quiz):
     try:
+        update_data_dict = update_data.model_dump(exclude_unset=True)
+
         result = await quizzes_collection.update_one(
             {"_id": ObjectId(quiz_id)}, 
-            {"$set": update_data.dict(exclude_unset=True)}
+            {"$set": update_data_dict}
         )
+
         if result.matched_count == 0:
             return None 
         
-        updated_quiz = await quizzes_collection.find_one(ObjectId(quiz_id)) #retrieve the updated quiz to confirm the update
-        updated_quiz["_id"] = PyObjectId(updated_quiz["_id"]) #confirm that the quiz ID is an instance of PyObjectId to pass the Quiz model structure
-        return {"message": "quiz updated successfully", "updated_quiz": Quiz(**updated_quiz), "modified_count": str(result.modified_count)}
+        updated_quiz = await quizzes_collection.find_one(ObjectId(quiz_id))
+        if updated_quiz:
+            updated_quiz["_id"] = PyObjectId(updated_quiz["_id"]) 
+            return {
+                "message": "Quiz updated successfully",
+                "updated_quiz": Quiz(**updated_quiz),
+                "modified_count": str(result.modified_count)
+            }
+        else:
+            return {"message": "Quiz not found after update"}
+
     except Exception as e:
         print(f"Error occurred while updating or retrieving quiz: {e}")
-        return None 
+        return None
+
 
 
 async def delete_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_id: str):
     try:
         result = await quizzes_collection.delete_one({"_id": ObjectId(quiz_id)})
-        return result.deleted_count  # Return the number of deleted documents
+        return result.deleted_count  
     except Exception as e:
         print(f"Error occurred while deleting quiz: {e}")
         return None  

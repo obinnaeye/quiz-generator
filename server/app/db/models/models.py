@@ -3,9 +3,7 @@ from typing import List, Optional
 from bson import ObjectId
 
 
-class PyObjectId(ObjectId):
-    """Custom ObjectId type for Pydantic to handle MongoDB ObjectIds."""
-    
+class PyObjectId(ObjectId):    
     def __get_pydantic_json_schema__(self, *args, **kwargs):
         return {
             "type": "string",
@@ -37,10 +35,11 @@ class Quiz(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
     title: str
     description: str
-    questions: List 
+    quiz_type: str
     owner_id: Optional [str] = None
     created_at: Optional[str] = None
-
+    questions: List 
+    
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
@@ -50,8 +49,23 @@ class Quiz(BaseModel):
 class UpdateQuiz(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    quiz_type: Optional[str] = None
     questions: Optional[List[dict]] = None 
 
     class Config:
         allow_population_by_field_name = True
         arbitrary_types_allowed = True
+
+
+class SeedQuiz(BaseModel):
+    title: str
+    description: str
+    quiz_type: str
+    owner_id: Optional [str] = None
+    created_at: Optional[str] = None
+    questions: List
+
+    class Config:
+        allow_population_by_field_name = True
+        arbitrary_types_allowed = True
+
