@@ -6,7 +6,7 @@ from reportlab.lib.pagesizes import letter
 from .draw_wrapped_text import draw_wrapped_text
 
 
-def generate_pdf(data: List[dict]):
+def generate_pdf(data: List[dict]) -> BytesIO:
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=letter)
     page_width, page_height = letter

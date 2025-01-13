@@ -75,4 +75,3 @@ export const mockTrueFalseQuestions = [
         answer: "true"
     },
 ];
-  

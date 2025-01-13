@@ -1,4 +1,4 @@
 from .login_request_model import LoginRequestModel
 from .login_response_model import LoginResponseModel
 from .user_model import UserModel
-from .update_quiz_history_model import UpdateQuizHistoryModel
+from .quiz_questions_model import QuizQuestionsModel

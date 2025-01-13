@@ -1,4 +1,3 @@
-// GenerateButton.txt
 import { GenerateButtonProps } from "@/libs/props";
 import React from "react";
 

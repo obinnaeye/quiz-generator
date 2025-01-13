@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-class UpdateQuizHistoryModel(BaseModel):
+class QuizQuestionsModel(BaseModel):
     question: str
     options: Optional[List[str]] 
     answer: str

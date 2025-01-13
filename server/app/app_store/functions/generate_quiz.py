@@ -1,4 +1,8 @@
+from typing import Any
 from fastapi import HTTPException
+
+from libs.model import QuizQuestionsModel
+
 from ..mocks.mock_quiz_data import (
     quiz_data_multiple_choice,
     quiz_data_open_ended,
@@ -6,7 +10,7 @@ from ..mocks.mock_quiz_data import (
 )
 from .update_quiz_history import update_quiz_history
 
-def generate_quiz(user_id: str, question_type: str, num_question: int):
+def generate_quiz(user_id: str, question_type: str, num_question: int) -> dict[str, Any]:
     if question_type == "multichoice":
         questions = quiz_data_multiple_choice
     elif question_type == "true-false":
@@ -16,7 +20,7 @@ def generate_quiz(user_id: str, question_type: str, num_question: int):
     else:
         raise HTTPException(status_code=400, detail="Invalid question type")
 
-    data = questions[:num_question]
-    update_quiz_history(user_id, data)
-    
-    return { "sucess": "Quiz generated", "quiz_data": data }
+    data: list[dict[QuizQuestionsModel]] = questions[:num_question]
+    update_quiz_history(user_id, data) #updates user's quiz history 
+
+    return { "quiz_data": data }

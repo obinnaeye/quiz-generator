@@ -1,4 +1,6 @@
+from typing import Any
 from fastapi import FastAPI, Query, HTTPException
+from fastapi.responses import StreamingResponse
 from app.api import healthcheck
 import logging
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,7 +26,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("app.log"),
+        # logging.FileHandler("app.log"),
         logging.StreamHandler()
     ]
 )
@@ -77,16 +79,16 @@ app.add_middleware(
 )
 
 @app.get("/generate-quiz")
-async def generate_quiz_handler(query: GenerateQuizQuery = Query(...)):
+async def generate_quiz_handler(query: GenerateQuizQuery = Query(...))-> dict[str, Any]:
     logger.info("Received query: %s" % query)
     return generate_quiz(query.user_id, query.question_type, query.num_question)
 
 @app.get("/get-user-quiz-history")
-def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Query(...)):
+def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Query(...))-> list:
     logger.info("Received query: %s" % query)
     return get_user_quiz_history(query.user_id)
 
 @app.get("/download-quiz")
-async def download_quiz_handler(query: DownloadQuizQuery = Query(...)):
+async def download_quiz_handler(query: DownloadQuizQuery = Query(...)) -> StreamingResponse:
     logger.info("Received query: %s" % query)
     return download_quiz(query.format, query.question_type, query.num_question)

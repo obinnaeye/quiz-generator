@@ -10,7 +10,7 @@ from ..mocks.mock_quiz_data import (
     quiz_data_true_false
 )
 
-def download_quiz(format: str, question_type: str, num_question: int):
+def download_quiz(format: str, question_type: str, num_question: int) -> StreamingResponse:
     if question_type == "multichoice":
         quiz_data = quiz_data_multiple_choice
     elif question_type == "true-false":
