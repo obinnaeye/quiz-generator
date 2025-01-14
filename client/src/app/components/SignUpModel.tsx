@@ -1,10 +1,4 @@
-// app/components/SignUpModal.tsx
-import { useState } from "react";
-
-type SignUpModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-};
+import { SignUpModalProps } from "@/libs/props";
 
 export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
   if (!isOpen) return null;
