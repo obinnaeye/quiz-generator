@@ -1,5 +1,10 @@
-import { QuizAnswerFieldProps } from '@/libs/props';
 import React from 'react';
+interface QuizAnswerFieldProps {
+  questionType: string;
+  index: number;
+  onAnswerChange: (index: number, answer: string) => void;
+  options: string[]; 
+}
 
 const QuizAnswerField: React.FC<QuizAnswerFieldProps> = ({ questionType, index, onAnswerChange, options }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

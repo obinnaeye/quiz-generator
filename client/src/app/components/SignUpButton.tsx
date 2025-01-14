@@ -1,3 +1,5 @@
+// src/app/components/SignUpButton.tsx
+
 import { useState } from "react";
 import SignUpModal from "./SignUpModel";
 
