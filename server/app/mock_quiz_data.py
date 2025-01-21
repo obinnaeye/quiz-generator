@@ -1,3 +1,4 @@
+
 quiz_data_true_false = [
     {
         "question": "The Earth is flat.",
