@@ -1,5 +1,9 @@
-import { SignInModalProps } from "@/libs/props";
 import { useState } from "react";
+
+interface SignInModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
 const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");

@@ -1,5 +1,9 @@
-import { GenerateButtonProps } from "@/libs/props";
+// GenerateButton.txt
 import React from "react";
+
+interface GenerateButtonProps {
+  onClick: () => void;
+}
 
 const GenerateButton: React.FC<GenerateButtonProps> = ({ onClick }) => {
   return (

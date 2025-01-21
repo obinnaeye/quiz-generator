@@ -1,5 +1,8 @@
-import { CheckButtonProps } from '@/libs/props';
 import React from 'react';
+
+interface CheckButtonProps {
+  onClick: () => void;
+}
 
 export default function CheckButton({ onClick }: CheckButtonProps) {
   return (

@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import { 
-  QuizForm, 
-  SignInButton, 
-  SignUpButton 
-} from "./components";
+import SignUpButton from "./components/SignUpButton";
+import SignInButton from "./components/SignInButton";
+import QuizForm from "./components/QuizForm";
 
 export default function Home() {
   return (
