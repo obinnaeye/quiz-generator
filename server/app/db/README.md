@@ -1,4 +1,4 @@
-# Database Folder
+# Database (db) Folder
 
 This folder contains all components related to the database integration for the quiz-generation app. Below is an overview of the structure and purpose of each subfolder and file.
 
@@ -44,7 +44,7 @@ This folder contains all components related to the database integration for the 
 ## Usage
 
 ### Setting Up the Database Connection
-The database connection is established using the `connect_to_mongo` function in `core/connection.py`. This function initializes the connection to the MongoDB server and provides access to the necessary collections.
+The database connection is established in the `core/connection.py`. Here the connection to the MongoDB server is initialized with access to the necessary collections.
 
 ### Seeding Data
 To seed the database with default data:
@@ -56,6 +56,9 @@ To seed the database with default data:
    replace `path-to-file` with your actual path to the seed.py file.
    
 3. The script will clear the database and populate it with default quizzes.
+
+4. Inserted quiz with their IDs can be accessed using mongoDB compass or mongoDB shell. 
+
 
 ### CRUD Operations
 CRUD operations are implemented in `crud/` and can be imported and used throughout the application. For example:
@@ -81,5 +84,6 @@ await create_quiz(quizzes_collection, quiz_data)
 ## Notes
 - Ensure the MongoDB server is running before executing any scripts.
 - Follow the Pydantic models defined in `models/models.py` for consistent data structure.
+- Check the `routes` folder for database healthcheck and CRUD operations Endpoints.
 
 For further details, refer to the full documentation in [`database_integration.md`](./database_integration.md).
