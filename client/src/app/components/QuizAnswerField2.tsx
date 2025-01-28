@@ -1,10 +1,9 @@
 import React from 'react';
-
 interface QuizAnswerFieldProps {
   questionType: string;
   index: number;
   onAnswerChange: (index: number, answer: string) => void;
-  options?: string[];
+  options: string[]; 
 }
 
 const QuizAnswerField: React.FC<QuizAnswerFieldProps> = ({ questionType, index, onAnswerChange, options }) => {
@@ -15,7 +14,7 @@ const QuizAnswerField: React.FC<QuizAnswerFieldProps> = ({ questionType, index, 
   if (questionType === 'multichoice') {
     return (
       <div>
-        {options?.map((option, optionIndex) => (
+        {options.map((option, optionIndex) => (
           <div key={optionIndex}>
             <input
               type="radio"
@@ -23,7 +22,9 @@ const QuizAnswerField: React.FC<QuizAnswerFieldProps> = ({ questionType, index, 
               value={option}
               onChange={handleInputChange}
             />
-            <label>{option}</label>
+            <label>
+              {option}
+            </label>
           </div>
         ))}
       </div>
@@ -31,7 +32,7 @@ const QuizAnswerField: React.FC<QuizAnswerFieldProps> = ({ questionType, index, 
   } else if (questionType === 'true-false') {
     return (
       <div>
-        {options?.map((option, optionIndex) => (
+        {options.map((option, optionIndex) => (
           <div key={optionIndex}>
             <input
               type="radio"
@@ -39,7 +40,9 @@ const QuizAnswerField: React.FC<QuizAnswerFieldProps> = ({ questionType, index, 
               value={option}
               onChange={handleInputChange}
             />
-            <label>{option}</label>
+            <label>
+              {option}
+            </label>
           </div>
         ))}
       </div>

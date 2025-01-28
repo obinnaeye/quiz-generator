@@ -1,24 +1,43 @@
 "use client";
 
-import React, { useState, Suspense } from 'react';
-import { determineQuizDisplay } from '../components/determineQuizDisplay';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import CheckButton from '../components/CheckButton';
 import NewQuizButton from '../components/NewQuizButton';
 import QuizAnswerField from '../components/QuizAnswerField';
-import { useSearchParams } from 'next/navigation';
-import { gradeSpecificQuestion } from '../components/MockOpenEndedAnswers';
 import DownloadQuiz from "../components/DownloadQuiz";
-
 
 const QuizDisplayPage = () => {
     const searchParams = useSearchParams();
     const questionType = searchParams.get('questionType') || 'multichoice';
     const numQuestions = Number(searchParams.get('numQuestions')) || 1;
+
+    const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
     const [userAnswers, setUserAnswers] = useState<string[]>([]);
     const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
     const [quizReport, setQuizReport] = useState<any[]>([]);
 
-    const quizQuestions = determineQuizDisplay(questionType as string, Number(numQuestions)) || [];
+    // Fetch quiz questions from the server
+    useEffect(() => {
+        const fetchQuizQuestions = async () => {
+            try {
+                // Use the full URL for localhost
+                const url = `http://localhost:8000/api/quiz?questionType=${questionType}&numQuestions=${numQuestions}`;
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch quiz questions');
+                }
+                const data = await response.json();
+                setQuizQuestions(data);
+                setUserAnswers(Array(data.length).fill(''));
+            } catch (error) {
+                console.error('Error fetching quiz questions:', error);
+            }
+        };
+
+        fetchQuizQuestions();
+    }, [questionType, numQuestions]);
 
     const handleAnswerChange = (index: number, answer: string) => {
         const updatedAnswers = [...userAnswers];
@@ -29,17 +48,8 @@ const QuizDisplayPage = () => {
     const checkAnswers = () => {
         const report = quizQuestions.map((question, index) => {
             const userAnswer = userAnswers[index];
-            let isCorrect = false;
-            let correctAnswer = "";
-
-            correctAnswer = question.answer;
-            if (questionType === 'multichoice') {
-                isCorrect = userAnswer === correctAnswer;
-            } else if (questionType === 'true-false') {
-                isCorrect = userAnswer === correctAnswer;
-            } else if (questionType === 'open-ended') { 
-                isCorrect = gradeSpecificQuestion(index, userAnswer) === 'Correct (flexible match)!';
-            }
+            const correctAnswer = question.answer;
+            const isCorrect = userAnswer === correctAnswer;
 
             return {
                 question: question.question,
@@ -56,19 +66,23 @@ const QuizDisplayPage = () => {
     return (
         <div className="quiz-container">
             <h1>{questionType} Quiz</h1>
-            <div className="quiz-questions">
-                {quizQuestions.map((question, index) => (
-                    <div key={index} className="quiz-question">
-                        <h3>{index + 1}. {question.question}</h3>
-                        <QuizAnswerField
-                            questionType={questionType as string}
-                            index={index}
-                            onAnswerChange={handleAnswerChange}
-                            options={question.options} 
-                        />
-                    </div>
-                ))}
-            </div>
+            {quizQuestions.length === 0 ? (
+                <p>Loading quiz questions...</p>
+            ) : (
+                <div className="quiz-questions">
+                    {quizQuestions.map((question, index) => (
+                        <div key={index} className="quiz-question">
+                            <h3>{index + 1}. {question.question}</h3>
+                            <QuizAnswerField
+                                questionType={questionType}
+                                index={index}
+                                onAnswerChange={handleAnswerChange}
+                                options={question.options}
+                            />
+                        </div>
+                    ))}
+                </div>
+            )}
 
             <div className="quiz-actions">
                 <CheckButton onClick={checkAnswers} />
@@ -93,13 +107,10 @@ const QuizDisplayPage = () => {
     );
 };
 
-
-
 export default function DisplayQuiz() {
     return (
-      <Suspense fallback={<div>Loading quiz...</div>}>
-        <QuizDisplayPage />
-      </Suspense>
+        <Suspense fallback={<div>Loading quiz...</div>}>
+            <QuizDisplayPage />
+        </Suspense>
     );
-  }
-  
+}
