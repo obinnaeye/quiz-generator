@@ -1,7 +1,7 @@
 from typing import List
 import logging
 
-from libs.model import QuizQuestionsModel
+from ....schemas.model import QuizQuestionsModel
 
 logger = logging.getLogger(__name__)
 

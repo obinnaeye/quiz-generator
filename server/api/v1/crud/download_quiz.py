@@ -4,7 +4,7 @@ from .generate_csv import generate_csv
 from .generate_docx import generate_docx
 from .generate_pdf import generate_pdf
 from .generate_txt import generate_txt
-from ..mocks.mock_quiz_data import (
+from ..db.mock_quiz_data import (
     quiz_data_multiple_choice,
     quiz_data_open_ended,
     quiz_data_true_false

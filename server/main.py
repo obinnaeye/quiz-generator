@@ -1,24 +1,22 @@
 from typing import Any
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.responses import StreamingResponse
-from app.api import healthcheck
+from .api import healthcheck
 import logging
 from fastapi.middleware.cors import CORSMiddleware
-from .app_store import (
+from .api.v1.crud import (
     download_quiz,
     generate_quiz,
     get_user_quiz_history
 )
-from libs.model import (
+from .schemas.model import (
     UserModel,
     LoginRequestModel,
     LoginResponseModel,
 )
-from libs.query import (
+from .schemas.query import (
     GenerateQuizQuery,
-    DownloadQuizQuery
-)
-from libs import (
+    DownloadQuizQuery,
     GetUserQuizHistoryQuery
 )
 
