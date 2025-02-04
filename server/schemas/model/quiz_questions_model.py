@@ -6,4 +6,3 @@ class QuizQuestionsModel(BaseModel):
     question: str
     options: Optional[List[str]] 
     answer: str
-    

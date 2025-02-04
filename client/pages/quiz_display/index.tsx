@@ -139,5 +139,4 @@ export default function DisplayQuiz() {
         />
       </Suspense>
     );
-  }
-  
+}
