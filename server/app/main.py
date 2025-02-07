@@ -12,6 +12,7 @@ from typing import List
 import json
 from reportlab.pdfgen import canvas
 from docx import Document
+from app.quiz.routers.quiz import router as quiz_router  
 
 from reportlab.lib.pagesizes import letter
 
@@ -103,6 +104,8 @@ def generate_docx(data: List[dict]):
 
 
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
+app.include_router(quiz_router, prefix="/api", tags=["quiz"])
+
 
 @app.get("/api")
 def read_root():
