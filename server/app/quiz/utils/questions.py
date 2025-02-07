@@ -1,48 +1,29 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from mock_data.multi_choice import mock_multiple_choice_questions
-from mock_data.open_ended import mock_open_ended_questions
-from mock_data.true_false import mock_true_false_questions
+from fastapi import HTTPException
 import random
+from app.quiz.mock_data.multi_choice import mock_multiple_choice_questions
+from app.quiz.mock_data.true_false import mock_true_false_questions
+from app.quiz.mock_data.open_ended import mock_open_ended_questions
 
-app = FastAPI()
+def get_questions(question_type: str, num_questions: int):
+    # Mapping user input to the correct data source
+    question_data = {
+        "multichoice": mock_multiple_choice_questions,
+        "true-false": mock_true_false_questions,
+        "open-ended": mock_open_ended_questions,
+    }
 
-class QuestionRequest(BaseModel):
-    question_type: str
-    num_questions: int
+    # Validate question type
+    if question_type not in question_data:
+        raise HTTPException(status_code=400, detail=f"Invalid question type: {question_type}")
 
-def shuffle_array(array):
-    
-    return random.sample(array, len(array))
+    questions = question_data[question_type]
 
-@app.post("/get-shuffled-questions/")
-async def get_shuffled_questions(request: QuestionRequest):
-    # Validate `question_type`
-    valid_types = ["multichoice", "true-false", "open-ended"]
-    if request.question_type not in valid_types:
+    # Validate the requested number of questions
+    if num_questions > len(questions):
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid question_type '{request.question_type}'. Valid types are: {valid_types}."
+            detail=f"Requested {num_questions} questions, but only {len(questions)} available.",
         )
-    
-    # Fetch questions based on type
-    if request.question_type == "multichoice":
-        questions = shuffle_array(mock_multiple_choice_questions)
-    elif request.question_type == "true-false":
-        questions = shuffle_array(mock_true_false_questions)
-    elif request.question_type == "open-ended":
-        questions = shuffle_array(mock_open_ended_questions)
 
-    # Validate `num_questions`
-    if request.num_questions < 1:
-        raise HTTPException(
-            status_code=400,
-            detail="num_questions must be at least 1."
-        )
-    if request.num_questions > len(questions):
-        raise HTTPException(
-            status_code=400,
-            detail=f"Requested {request.num_questions} questions, but only {len(questions)} available."
-        )
-    
-    return {"questions": questions[:request.num_questions]}
+    # Return only the requested number of questions
+    return random.sample(questions, num_questions)
