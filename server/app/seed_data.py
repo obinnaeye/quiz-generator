@@ -483,3 +483,69 @@ seed_quizzes = [
     ]
 }
 ]
+
+
+
+seed_user_data = [
+  {
+    "username": "john_doe",
+    "email": "john.doe@example.com",
+    "full_name": "John Doe",
+    "password": "testpassword1"
+  },
+  {
+    "username": "jane_smith",
+    "email": "jane.smith@example.com",
+    "full_name": "Jane Smith",
+    "password": "testpassword2"
+  },
+  {
+    "username": "alex_walker",
+    "email": "alex.walker@example.com",
+    "full_name": "Alex Walker",
+    "password": "testpassword3"
+  },
+  {
+    "username": "mike_johnson",
+    "email": "mike.johnson@example.com",
+    "full_name": "Mike Johnson",
+    "password": "testpassword4"
+  },
+  {
+    "username": "sarah_lee",
+    "email": "sarah.lee@example.com",
+    "full_name": "Sarah Lee",
+    "password": "testpassword5"
+  },
+  {
+    "username": "chris_evans",
+    "email": "chris.evans@example.com",
+    "full_name": "Chris Evans",
+    "password": "testpassword6"
+  },
+  {
+    "username": "lisa_martin",
+    "email": "lisa.martin@example.com",
+    "full_name": "Lisa Martin",
+    "password": "testpassword7"
+  },
+  {
+    "username": "david_clark",
+    "email": "david.clark@example.com",
+    "full_name": "David Clark",
+    "password": "testpassword8"
+  },
+  {
+    "username": "emily_adams",
+    "email": "emily.adams@example.com",
+    "full_name": "Emily Adams",
+    "password": "testpassword9"
+  },
+  {
+    "username": "ryan_harris",
+    "email": "ryan.harris@example.com",
+    "full_name": "Ryan Harris",
+    "password": "testpassword10"
+  }
+]
+

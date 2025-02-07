@@ -8,7 +8,8 @@ from fastapi.responses import FileResponse
 from fastapi.responses import StreamingResponse
 from io import StringIO, BytesIO
 import csv
-from typing import List
+from typing import List, Optional
+
 import json
 from reportlab.pdfgen import canvas
 from docx import Document
@@ -18,6 +19,10 @@ from reportlab.lib.pagesizes import letter
 from .mock_quiz_data import quiz_data_multiple_choice, quiz_data_true_false, quiz_data_open_ended
 
 from app.routes import router as app_router
+
+from app.db.core.connection import users_collection
+from app.db.crud.user_crud import create_user, get_user_by_id
+from app.db.models.models import UserCreate, UserDB
 
 
 
@@ -121,27 +126,67 @@ class User(BaseModel):
     password: str
 
 class LoginRequest(BaseModel):
-    username_or_email: str
+    username: str
+    email: EmailStr
     password: str
 
 class LoginResponse(BaseModel):
     message: str
-    user: User
+    user_id: str
+    username: str
+    fullname: str
+    email: str
+    role: Optional[str] = "user"
+
+class RegistrationResponse(BaseModel):
+    message: str
+    user: UserDB
+
+# class LoginResponse(BaseModel):
+#     message: str
+#     user: User
 
 mock_db: list[User] = []
 
 
 # The Register functionality
-@app.post("/register/", response_model=User)
-def create_user(user:User):
-    if any(existing_user.username == user.username for existing_user in mock_db):
-        raise HTTPException(status_code=400, detail="Username already taken")
-
-    if any(existing_user.email == user.email for existing_user in mock_db):
-        raise HTTPException(status_code=400, detail="Email already registered")
+@app.post("/register/", response_model=RegistrationResponse)
+async def register_user(user: UserCreate):
+    existing_user = await users_collection.find_one(
+        {"$or": [{"username": user.username}, {"email": user.email}]}
+    )
     
-    mock_db.append(user)
-    return user
+    if existing_user:
+        if existing_user["username"] == user.username:
+            raise HTTPException(status_code=400, detail="Username already taken")
+        if existing_user["email"] == user.email:
+            raise HTTPException(status_code=400, detail="Email already registered")
+
+    result = await create_user(users_collection, user)
+    if not result:
+        raise HTTPException(status_code=500, detail="User registration failed")
+    
+    user_data = await get_user_by_id(users_collection, result["new_user_ID"])
+    if not user_data:
+        raise HTTPException(status_code=500, detail="Error retrieving user data")
+    
+    return RegistrationResponse(
+        message="Registration successful",
+        user=user_data
+    )
+
+
+# @app.post("/register/", response_model=User)
+# def create_user(user:User):
+#     if any(existing_user.username == user.username for existing_user in mock_db):
+#         raise HTTPException(status_code=400, detail="Username already taken")
+
+#     if any(existing_user.email == user.email for existing_user in mock_db):
+#         raise HTTPException(status_code=400, detail="Email already registered")
+    
+#     mock_db.append(user)
+#     return user
+
 
 # List all the users
 @app.get("/users/", response_model=list[User])
@@ -151,13 +196,36 @@ def list_users():
 
 
 @app.post("/login/", response_model=LoginResponse)
-def login(request: LoginRequest):  
-    user = next((u for u in mock_db if (u.username == request.username_or_email or u.email == request.username_or_email) and u.password == request.password), None)
+async def login_user(request: LoginRequest):
+    user = await users_collection.find_one(
+        {"$or": [{"username": request.username}, {"email": request.email}]}
+    )
 
-    if user is None:
+    if not user or user["hashed_password"] != request.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    return {"message": "Login successful", "user": user}
+    return LoginResponse(
+        message="Login successful",
+        user_id=str(user["_id"]),
+        username=user["username"],
+        fullname = user["full_name"],
+        email=user["email"],
+        role=user.get("role", "user"),
+    )
+
+
+
+
+#@app.post("/login/", response_model=LoginResponse)
+# def login(request: LoginRequest):  
+#     user = next((u for u in mock_db if (u.username == request.username_or_email or u.email == request.username_or_email) and u.password == request.password), None)
+
+#     if user is None:
+#         raise HTTPException(status_code=401, detail="Invalid credentials")
+
+#     return {"message": "Login successful", "user": user}
+
+
 
 # Add CORS middleware
 app.add_middleware(

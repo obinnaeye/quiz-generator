@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, EmailStr
 from typing import List, Optional
+from datetime import datetime, timezone
 from bson import ObjectId
+
 
 
 class PyObjectId(ObjectId):    
@@ -19,17 +21,79 @@ class PyObjectId(ObjectId):
         return values
     
 
-class User(BaseModel):
-    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+# class User(BaseModel):
+#     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+#     username: str
+#     email: str
+#     quizzes: List[str] = []  # List of quiz IDs created or saved by the user
+#     created_at: Optional[str] = None
+
+#     class Config:
+#         allow_population_by_field_name = True
+#         arbitrary_types_allowed = True
+#         json_encoders = {ObjectId: str}
+
+class UserBase(BaseModel):
+    """Common fields for user models"""
     username: str
-    email: str
-    quizzes: List[str] = []  # List of quiz IDs created or saved by the user
-    created_at: Optional[str] = None
+    email: EmailStr
+    full_name: Optional[str] = None
+    quizzes: Optional[List[str]] = []  # List of quiz IDs associated with the user
+
+class UserCreate(UserBase):
+    """Used for user registration"""
+    password: str  # Plaintext password (to be hashed before storage)
+
+class UserDB(UserBase):
+    """Represents the user as stored in MongoDB"""
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    hashed_password: str
+    is_active: bool 
+    role: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now())
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now())
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
+        from_attributes = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
+
+
+class Update_UserDB(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    quizzes: Optional[List[str]] = [] 
+    hashed_password: Optional[str] = None 
+    is_active: Optional[bool] = None
+    role:  Optional[str] = None 
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now())
+
+    class Config:
+        populate_by_name = True
+        from_attributes = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class SeedUser(UserBase):
+    """Represents the user as stored in MongoDB"""
+    hashed_password: str
+    is_active: bool 
+    role: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now())
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now())
+
+    class Config:
+        populate_by_name = True
+        from_attributes = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+    
+
+
+
 
 class Quiz(BaseModel):
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
@@ -37,11 +101,11 @@ class Quiz(BaseModel):
     description: str
     quiz_type: str
     owner_id: Optional [str] = None
-    created_at: Optional[str] = None
+    created_at: Optional[datetime]  = Field(default_factory=lambda: datetime.now())
     questions: List 
     
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
         json_encoders = {ObjectId: str}
 
@@ -53,7 +117,7 @@ class UpdateQuiz(BaseModel):
     questions: Optional[List[dict]] = None 
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
 
 
@@ -62,10 +126,10 @@ class SeedQuiz(BaseModel):
     description: str
     quiz_type: str
     owner_id: Optional [str] = None
-    created_at: Optional[str] = None
+    created_at: Optional[datetime]  = Field(default_factory=lambda: datetime.now())
     questions: List
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         arbitrary_types_allowed = True
 
