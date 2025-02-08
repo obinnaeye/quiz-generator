@@ -18,7 +18,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./components/*"],
+      "@/*": ["./layouts/*"],
+      "@/*": ["./pages/*"],
     },
     "types": ["jest", "node"],
    
