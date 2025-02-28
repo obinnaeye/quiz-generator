@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, model_validator, EmailStr
 from typing import List, Optional
-from datetime import datetime, timezone
+from datetime import datetime
 from bson import ObjectId
 
 
@@ -44,10 +44,14 @@ class UserCreate(UserBase):
     """Used for user registration"""
     password: str  # Plaintext password (to be hashed before storage)
 
-class UserDB(UserBase):
+class UserDB(BaseModel):
     """Represents the user as stored in MongoDB"""
     id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    username: str
+    email: EmailStr
     hashed_password: str
+    full_name: Optional[str] = None
+    quizzes: Optional[List[str]] = []  # List of quiz IDs associated with the user
     is_active: bool 
     role: str
     created_at: datetime = Field(default_factory=lambda: datetime.now())
@@ -102,6 +106,7 @@ class Quiz(BaseModel):
     quiz_type: str
     owner_id: Optional [str] = None
     created_at: Optional[datetime]  = Field(default_factory=lambda: datetime.now())
+    updated_at: Optional[datetime] = Field(default_factory=lambda: datetime.now())
     questions: List 
     
     class Config:

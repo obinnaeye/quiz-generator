@@ -1,9 +1,9 @@
 
 from fastapi import APIRouter, HTTPException
-from app.db.crud.quiz_crud import create_quiz, get_quiz, update_quiz, delete_quiz
-from app.db.models.models import Quiz, UpdateQuiz
+from ....app.db.crud.quiz_crud import create_quiz, get_quiz, update_quiz, delete_quiz
+from ....app.db.models.models import Quiz, UpdateQuiz
 from bson import ObjectId
-from app.db.core.connection import quizzes_collection
+from ....app.db.core.connection import quizzes_collection
 
 router = APIRouter()
 

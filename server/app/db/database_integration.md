@@ -38,7 +38,7 @@ Ensure the following are installed on your development environment:
 
 ## Connection Setup
 
-The database connection is managed through the `connection.py` file located in the `db/core/` directory. This file establishes the connection to the MongoDB instance and provides access to the necessary collections.
+The database connection is managed through the `connection.py` file located in the `db/core/` directory. This file establishes the connection to the MongoDB instance and provides access to the necessary collections. Database Indexing is also implemented in this file.
 
 ### Example of `connection.py`
 ```python
@@ -81,6 +81,22 @@ The database consists of the following collections:
 }
 ```
 
+### User Collection Example
+```json
+ {
+    "_id": "ObjectId",
+    "username": "username",
+    "email": "email@example.com",
+    "full_name": "full_name",
+    "quizzes": [],
+    "is_active": true,
+    "role": "user",
+    "created_at": "datatime",
+    "updated_at": "datetime",
+    "hashed_password": "hashedpassword"
+  }
+```
+
 ---
 
 ## CRUD Operations
@@ -98,16 +114,23 @@ async def create_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_data: dic
         print(f"Error occurred while creating quiz: {e}")
         return None 
 ```
+---
+
+## Database Models and Schemas
+
+- **Quiz_models and Quiz_schemas**: These are the pydantic models and schemas used for validation and serialization of quiz related data accross the application.
+
+- **User_models and User_schemas**: These are the pydantic models and schemas used for validation and serialization of user related data accross the application.
 
 ---
 
 ## Seeding Data
 
-The project uses `seed_data.py` and `seed.py` to seed the database with default quizzes.
+The project uses `seed_data.py` and `seed.py` to seed the database with default quizzes and user data.
 
 ### File Locations
 
-- `seed_data.py`: Contains the list of quiz data to be seeded.
+- `seed_data.py`: Contains the list of quiz data and user data to be seeded.
 - `seed.py`: Contains the script to populate the database with seed data.
 
 ### Seeding Instructions
@@ -127,7 +150,7 @@ The project uses `seed_data.py` and `seed.py` to seed the database with default 
 
 ## Accessing Seeded Quiz Data
 
-Once the database is seeded, you can access the quiz data to verify its structure and content. Below are the instructions for retrieving quiz data using both MongoDB Shell and MongoDB Compass.
+Once the database is seeded, you can access the quiz data  or user data to verify its structure and content. Below are the instructions for retrieving quiz data using both MongoDB Shell and MongoDB Compass.
 
 ### Using MongoDB Shell
 

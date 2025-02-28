@@ -7,13 +7,24 @@ This folder contains all components related to the database integration for the 
 ```
 .
 ├── core/
-│   └── connection.py   # Contains the database connection logic.
+│   └── connection.py   # Handles MongoDB connection database indexing.
 ├── crud/
-│   ├── user_crud.py    # CRUD operations related to users.
-│   └── quiz_crud.py    # CRUD operations related to quizzes.
+│   ├── user_crud.py    # User CRUD operations.
+│   └── quiz_crud.py    # Quiz CRUD operations.
 ├── models/
-│   └── models.py       # Pydantic models and schemas for the database.
-└── README.md           # This README file.
+│   ├── user_models.py  # User-specific models.
+│   ├── quiz_models.py  # Quiz-specific models.
+│   └── validator.py    # Data validation functions.
+├── schemas/
+│   ├── user_schemas.py # User request/response schemas.
+│   └── quiz_schemas.py # Quiz request/response schemas.
+├── routes/
+│   ├── health.py       # Health check endpoint.
+│   ├── users.py        # User-related API routes.
+│   └── quizzes.py      # Quiz-related API routes.
+├── utils.py            # Database utility functions.
+├── README.md           # Database overview.
+└── database_integration.md  # MongoDB integration guide.
 ```
 
 ## Components
@@ -33,10 +44,37 @@ This folder contains all components related to the database integration for the 
   - Encapsulates database queries for better modularity and maintainability.
 
 ### 3. **Models**
-- **File:** `models/models.py`
+- **Folder:** `models/`
+- **Files:**
+  - `quiz_models`: contains the pydantic quiz models.
+  - `user_models`: contains the pydantic user models.
+  - `validators`: contains the pyobjectId validator.
 - **Purpose:**
   - Defines Pydantic models for validation and serialization of database documents.
+
+  ### 4. **Routes**
+- **Files:**
+  - `__init__`: assembles all routes associated with the database.
+  - `health`: contains the Health check endpoint.
+  - `quizzes`: contains routes associated with quizzes.
+  - `users`: contains routes associated with users.
+- **Purpose:**
+  - Defines endpoints for interacting with the database.
+
+### 5. **Schemas**
+- **Folder:** `schema/`
+- **Files:**
+  - `quiz_schemas`: contains the pydantic quiz models
+  - `user_schemas`: contains the pydantic user models
+- **Purpose:**
+  - Defines Pydantic schemas for validation and serialization of database documents.
   - Ensures consistent data structures across the application.
+
+### 6. **Utils**
+- **File:** `db/utils.py`
+- **Purpose:**
+  - Handles the utility functions like password hashing and validation etc.
+
 
 ## Documentation
 - Detailed documentation for the MongoDB integration can be found in [`database_integration.md`](./database_integration.md).
@@ -49,7 +87,7 @@ The database connection is established in the `core/connection.py`. Here the con
 ### Seeding Data
 To seed the database with default data:
 1. Ensure MongoDB is running locally.
-2. Run the seed script from the project root:
+2. Navigate to the app folder and run the seed script:
    ```bash
    PYTHONPATH=path-to-file python seed.py
    ```
@@ -83,7 +121,7 @@ await create_quiz(quizzes_collection, quiz_data)
 
 ## Notes
 - Ensure the MongoDB server is running before executing any scripts.
-- Follow the Pydantic models defined in `models/models.py` for consistent data structure.
+- Follow the Pydantic models defined in `models/` and `schemas` folders for consistent data structure.
 - Check the `routes` folder for database healthcheck and CRUD operations Endpoints.
 
 For further details, refer to the full documentation in [`database_integration.md`](./database_integration.md).

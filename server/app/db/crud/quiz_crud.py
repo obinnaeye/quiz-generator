@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorCollection
 from bson import ObjectId
-from app.db.models.models import PyObjectId, Quiz
+from ....app.db.models.models import PyObjectId, Quiz
 
 async def create_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_data: dict):
     try:
