@@ -28,6 +28,7 @@ class SeedQuiz(BaseModel):
     quiz_type: str
     owner_id: Optional [str] = None
     created_at: Optional[datetime]  = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: Optional[datetime]  = None
     questions: List
 
     class Config:

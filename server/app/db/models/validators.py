@@ -17,4 +17,3 @@ class PyObjectId(ObjectId):
         if value is not None and not isinstance(value, ObjectId):
             raise ValueError("Invalid ObjectId")
         return values
-    

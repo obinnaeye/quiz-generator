@@ -56,8 +56,8 @@ This folder contains all components related to the database integration for the 
 - **Files:**
   - `__init__`: assembles all routes associated with the database.
   - `health`: contains the Health check endpoint.
-  - `quizzes`: contains routes associated with quizzes.
-  - `users`: contains routes associated with users.
+  - `quizzes`: contains API routes associated with quizzes.
+  - `users`: contains API routes associated with users.
 - **Purpose:**
   - Defines endpoints for interacting with the database.
 

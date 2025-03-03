@@ -38,7 +38,7 @@ Ensure the following are installed on your development environment:
 
 ## Connection Setup
 
-The database connection is managed through the `connection.py` file located in the `db/core/` directory. This file establishes the connection to the MongoDB instance and provides access to the necessary collections. Database Indexing is also implemented in this file.
+The database connection is managed through the `connection.py` file located in the `db/core/` directory. This file establishes the connection to the MongoDB instance and provides access to the necessary collections.
 
 ### Example of `connection.py`
 ```python
@@ -81,22 +81,6 @@ The database consists of the following collections:
 }
 ```
 
-### User Collection Example
-```json
- {
-    "_id": "ObjectId",
-    "username": "username",
-    "email": "email@example.com",
-    "full_name": "full_name",
-    "quizzes": [],
-    "is_active": true,
-    "role": "user",
-    "created_at": "datatime",
-    "updated_at": "datetime",
-    "hashed_password": "hashedpassword"
-  }
-```
-
 ---
 
 ## CRUD Operations
@@ -119,9 +103,6 @@ async def create_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_data: dic
 ## Database Models and Schemas
 
 - **Quiz_models and Quiz_schemas**: These are the pydantic models and schemas used for validation and serialization of quiz related data accross the application.
-
-- **User_models and User_schemas**: These are the pydantic models and schemas used for validation and serialization of user related data accross the application.
-
 ---
 
 ## Seeding Data
@@ -239,5 +220,3 @@ You can use this data for testing CRUD operations or for building new features i
 ---
 
 This document serves as a comprehensive guide to MongoDB integration in the Quiz Generator project. Update it regularly to reflect changes in the project structure or functionalities.
-
-
