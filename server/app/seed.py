@@ -1,7 +1,7 @@
 import asyncio
 from db.core.connection import quizzes_collection, users_collection
 from seed_data import seed_quizzes, seed_user_data 
-from datetime import datetime
+from datetime import datetime, timezone
 from db.utils import hash_password
 from db.models.user_models import SeedUser
 from db.models.quiz_models import SeedQuiz
@@ -25,7 +25,7 @@ async def seed_users_collection():
             user_data["hashed_password"] = hash_password(user_data.pop("password"))  
             user_data["is_active"] = True
             user_data["role"] = "user"
-            user_data["created_at"] = datetime.now()
+            user_data["created_at"] = datetime.now(timezone.utc)
             user_data["updated_at"] = None
             user = SeedUser(**user_data)
             await users_collection.insert_one(user.model_dump())

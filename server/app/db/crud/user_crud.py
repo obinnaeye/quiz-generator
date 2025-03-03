@@ -39,10 +39,9 @@ async def create_user(users_collection: AsyncIOMotorCollection, user: CreateUser
     
     except PyMongoError as e:
         logger.error(f"Database error while creating user: {e}")
-        return None
     except ValueError as e:
         logger.error(f"Invalid data: {e}")
-        return None
+    return None
 
 async def get_user_by_id(users_collection: AsyncIOMotorCollection, user_id: str) -> Optional[UserSchema]:
     try:
@@ -65,10 +64,9 @@ async def get_user_by_id(users_collection: AsyncIOMotorCollection, user_id: str)
     
     except InvalidId:
         logger.error(f"Invalid user_id format: {user_id}")
-        return None
     except PyMongoError as e:
         logger.error(f"Error retrieving user by ID: {e}")
-        return None
+    return None
 
 
 async def get_user_by_email(users_collection: AsyncIOMotorCollection, email: str) -> Optional[UserSchema]:
@@ -92,7 +90,7 @@ async def get_user_by_email(users_collection: AsyncIOMotorCollection, email: str
     
     except PyMongoError as e:
         logger.error(f"Error retrieving user by email: {e}")
-        return None
+    return None
 
 
 
@@ -124,10 +122,9 @@ async def update_user(users_collection: AsyncIOMotorCollection, user_id: str, us
     
     except InvalidId:
         logger.error(f"Invalid user_id format: {user_id}")
-        return None
     except PyMongoError as e:
         logger.error(f"Database error while updating user: {e}")
-        return None
+    return None
     
 
 
@@ -150,7 +147,7 @@ async def delete_user(users_collection: AsyncIOMotorCollection, user_id: str) ->
     except PyMongoError as e:
         logger.error(f"Error while deleting user: {e}")
 
-        return DeleteUserResponse(
+    return DeleteUserResponse(
             message="An error occurred while deleting the user",
             delete_count=0
         )
@@ -178,5 +175,5 @@ async def list_users(users_collection: AsyncIOMotorCollection) -> List[UserSchem
 
     except PyMongoError as e:
         logger.error(f"Database error while listing users: {e}")
-        return []
+    return []
 
