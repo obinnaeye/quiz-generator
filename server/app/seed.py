@@ -43,5 +43,5 @@ async def seed_database():
 
 
 if __name__ == "__main__":
-    asyncio.run(seed_quizzes_collection())
+    asyncio.run(seed_database())
 
