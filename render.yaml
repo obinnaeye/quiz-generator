@@ -11,9 +11,6 @@ services:
       - key: MONGO_URI
         value: mongodb://mongo:27017/mydatabase
     plan: free
-    disk:
-      name: data
-      sizeGB: 1
 
   - type: worker
     name: mongo
