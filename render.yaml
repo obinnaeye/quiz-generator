@@ -15,7 +15,7 @@ services:
       name: data
       sizeGB: 1
 
-  - type: private
+  - type: worker
     name: mongo
     env: docker
     dockerfilePath: Dockerfile.mongo
