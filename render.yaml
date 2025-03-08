@@ -12,11 +12,3 @@ services:
         value: mongodb://mongo:27017/mydatabase
     plan: free
 
-  - type: worker
-    name: mongo
-    env: docker
-    dockerfilePath: Dockerfile.mongo
-    plan: free
-    envVars:
-      - key: MONGO_INITDB_DATABASE
-        value: mydatabase
