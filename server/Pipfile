@@ -8,10 +8,10 @@ fastapi = {extras = ["standard"]}
 uvicorn = "*"
 python-dotenv = "*"
 typing_extensions = "*"
+docx = "*"
+python-docx = "*"
 
 [dev-packages]
 
 [requires]
 python_version = "3.12"
-
-
