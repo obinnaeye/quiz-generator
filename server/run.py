@@ -1,4 +1,4 @@
-from main import app
+from .main import app
 import uvicorn
 from dotenv import load_dotenv
 import os
