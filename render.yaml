@@ -7,6 +7,5 @@ services:
     branch: deploy-backend
     rootDir: server  
     buildCommand: pip install -r requirements.txt
-    startCommand: "python -m main"
-
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
     autoDeploy: true
