@@ -8,3 +8,6 @@ services:
     buildCommand: pip install -r server/requirements.txt
     startCommand: "uvicorn server.main:app --host 0.0.0.0 --port 10000"
     autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 10000
