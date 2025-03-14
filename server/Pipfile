@@ -10,6 +10,9 @@ python-dotenv = "*"
 typing_extensions = "*"
 motor = "*"
 bcrypt = "*"
+docx = "*"
+python-docx = "*"
+reportlab = "*"
 
 [dev-packages]
 
