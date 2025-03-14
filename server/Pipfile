@@ -8,8 +8,14 @@ fastapi = {extras = ["standard"]}
 uvicorn = "*"
 python-dotenv = "*"
 typing_extensions = "*"
+<<<<<<< HEAD
 motor = "*"
 bcrypt = "*"
+=======
+docx = "*"
+python-docx = "*"
+reportlab = "*"
+>>>>>>> master
 
 [dev-packages]
 
