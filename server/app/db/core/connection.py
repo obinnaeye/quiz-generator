@@ -1,13 +1,15 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
+from dotenv import load_dotenv
 import os
 
 
+load_dotenv()
 
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+MONGO_URI = os.getenv("MONGO_URI")
 
 client = AsyncIOMotorClient(MONGO_URI)
 
-database = client["quiz_db"]
+database = client["quizApp_db"]
 
 quizzes_collection = database["quizzes"]
 users_collection = database["users"]

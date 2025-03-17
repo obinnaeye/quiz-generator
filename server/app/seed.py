@@ -1,6 +1,4 @@
 import asyncio
-from db.core.connection import quizzes_collection
-from seed_data import seed_quizzes
 from db.core.connection import quizzes_collection, users_collection
 from seed_data import seed_quizzes, seed_user_data 
 from datetime import datetime, timezone
