@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from pydantic import BaseModel
-from app.quiz.utils.questions import get_questions  # Import your logic for fetching questions
-from app.quiz.utils.grading import grade_answers  # Import your grading logic
+from server.app.quiz.utils.questions import get_questions  # Import your logic for fetching questions
+from server.app.quiz.utils.grading import grade_answers  # Import your grading logic
 
 router = APIRouter()
 
@@ -14,8 +14,8 @@ class UserAnswer(BaseModel):
     question_type: str  # Add question_type to the model
 
 # API Route to grade answers
-@router.post("/grade-answers/")
-@router.post("/grade-answers/")
+@router.post("/grade-answers")
+@router.post("/grade-answers")
 async def grade_user_answers(user_answers: List[UserAnswer]):
     try:
         # Convert each Pydantic model instance to a dict
@@ -37,7 +37,7 @@ class QuizQuestion(BaseModel):
     answer: str  # ✅ Added the answer field
 
 # API Route to fetch questions
-@router.post("/get-questions/", response_model=List[QuizQuestion])
+@router.post("/get-questions", response_model=List[QuizQuestion])
 def fetch_questions(request: QuestionRequest):
     try:
         selected_questions = get_questions(request.question_type, request.num_questions)
