@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckButtonProps } from '../../../interfaces/props';
+import { CheckButtonProps } from '../../interfaces/props';
 
 export default function CheckButton({ onClick }: CheckButtonProps) {
   return (

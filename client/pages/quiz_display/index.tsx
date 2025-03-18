@@ -1,142 +1,178 @@
 "use client";
 
-import React, { useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
-import { determineQuizDisplay, gradeSpecificQuestion } from '../../lib';
-import { 
-    CheckButton, 
-    CheckQuizHistoryButton, 
-    DownloadQuiz, 
-    NewQuizButton, 
-    QuizAnswerField 
-} from '../../components/(public)/home';
-import { GeneratedQuizModel } from '../../interfaces/models';
-import { QuizDisplayPageProps } from '../../interfaces/props';
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import {
+  CheckButton,
+  CheckQuizHistoryButton,
+  DownloadQuiz,
+  NewQuizButton,
+  QuizAnswerField,
+} from "../../components/home";
 
-const QuizDisplayPage: React.FC<QuizDisplayPageProps> =  ({userId, questionType, numQuestions, quizQuestions}) => {
-    const [userAnswers, setUserAnswers] = useState<string[]>([]);
-    const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
-    const [quizReport, setQuizReport] = useState<any[]>([]);
+const QuizDisplayPage = () => {
+  const searchParams = useSearchParams();
+  const questionType = searchParams.get("questionType") || "multichoice";
+  const numQuestions = Number(searchParams.get("numQuestions")) || 1;
+  const userId = searchParams.get("userId") || "defaultUserId";
 
-    const handleAnswerChange = (index: number, answer: string) => {
-        const updatedAnswers = [...userAnswers];
-        updatedAnswers[index] = answer;
-        setUserAnswers(updatedAnswers);
-    };
+  const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
+  const [userAnswers, setUserAnswers] = useState<(string | number)[]>([]);
+  const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
+  const [quizReport, setQuizReport] = useState<any[]>([]);
 
-    const checkAnswers = () => {
-        const report = quizQuestions.map((question, index) => {
-            const userAnswer = userAnswers[index];
-            let isCorrect = false;
-            let correctAnswer = "";
-
-            correctAnswer = question.answer;
-            if (questionType === 'multichoice') {
-                isCorrect = userAnswer === correctAnswer;
-            } else if (questionType === 'true-false') {
-                isCorrect = userAnswer === correctAnswer;
-            } else if (questionType === 'open-ended') { 
-                isCorrect = gradeSpecificQuestion(index, userAnswer) === 'Correct (flexible match)!';
-            }
-
-            return {
-                question: question.question,
-                userAnswer,
-                correctAnswer,
-                isCorrect,
-            };
+  // Fetch quiz questions from the server
+  useEffect(() => {
+    const fetchQuizQuestions = async () => {
+      try {
+        const url = `http://localhost:8000/api/get-questions`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question_type: questionType,
+            num_questions: numQuestions,
+          }),
         });
-        setQuizReport(report);
-        setIsQuizChecked(true);
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch quiz questions");
+        }
+
+        const data = await response.json();
+        setQuizQuestions(data);
+        setUserAnswers(Array(data.length).fill(""));
+      } catch (error) {
+        console.error("Error fetching quiz questions:", error);
+      }
     };
 
-    return (
-        <div className="quiz-container">
-            <div >
-                <h1>{questionType} Quiz</h1>
-                <div className="quiz-questions">
-                    {quizQuestions.map((question, index) => (
-                        <div key={index} className="quiz-question">
-                            <h3>{index + 1}. {question.question}</h3>
-                            <QuizAnswerField
-                                questionType={questionType as string}
-                                index={index}
-                                onAnswerChange={handleAnswerChange}
-                                options={question.options} 
-                            />
-                        </div>
-                    ))}
-                </div>
+    fetchQuizQuestions();
+  }, [questionType, numQuestions]);
 
-                <div className="quiz-actions">
-                    <CheckButton onClick={checkAnswers} />
-                    {isQuizChecked && <NewQuizButton />}
-                </div>
+  const handleAnswerChange = (index: number, answer: string | number) => {
+    const updatedAnswers = [...userAnswers];
+    updatedAnswers[index] = answer;
+    setUserAnswers(updatedAnswers);
+  };
 
-                {isQuizChecked && (
-                    <div className="quiz-report">
-                        <h2>Quiz Results</h2>
-                        {quizReport.map((report, index) => (
-                            <div key={index} className={`result ${report.isCorrect ? 'correct' : 'incorrect'}`}>
-                                <p>Question: {report.question}</p>
-                                <p>Your Answer: {report.userAnswer}</p>
-                                <p>Correct Answer: {report.correctAnswer}</p>
-                                <p>Result: {report.isCorrect ? 'Correct' : 'Incorrect'}</p>
-                            </div>
-                        ))}
-                    </div>
-                )}
-                <DownloadQuiz userId={userId} question_type={questionType} numQuestion={numQuestions} />
-            </div>
-            <div>
-                <CheckQuizHistoryButton />
-            </div> 
+  // Updated checkAnswers function to convert binary answers for true-false questions
+  const checkAnswers = async () => {
+    try {
+      const payload = quizQuestions.map((question, index) => {
+        if (!question || !("answer" in question)) {
+          throw new Error(
+            `Missing answer for question: ${question?.question || "Unknown Question"}`
+          );
+        }
+        return {
+          question: question.question,
+          user_answer: userAnswers[index].toString(),
+          correct_answer: question.answer.toString(),
+          question_type: question.question_type,
+        };
+      });
+
+      const response = await fetch("http://localhost:8000/api/grade-answers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // Send payload as an array to match the expected Pydantic model.
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error grading quiz");
+      }
+
+      const gradedReport = await response.json();
+
+      // Transform binary values for true-false questions into "true" or "false"
+      const transformedReport = gradedReport.map((report: any) => {
+        if (report.question_type === "true-false") {
+          return {
+            ...report,
+            user_answer:
+              report.user_answer === "1" || report.user_answer === 1 ? "true" : "false",
+            correct_answer:
+              report.correct_answer === "1" || report.correct_answer === 1 ? "true" : "false",
+          };
+        }
+        return report;
+      });
+
+      setQuizReport(transformedReport);
+      setIsQuizChecked(true);
+    } catch (error) {
+      console.error("Error grading quiz:", error);
+    }
+  };
+
+  return (
+    <div className="quiz-container">
+      <div>
+        <h1>{questionType} Quiz</h1>
+        {quizQuestions.length === 0 ? (
+          <p>Loading quiz questions...</p>
+        ) : (
+          <div className="quiz-questions">
+            {quizQuestions.map((question, index) => (
+              <div key={index} className="quiz-question">
+                <h3>
+                  {index + 1}. {question.question}
+                </h3>
+                <QuizAnswerField
+                  questionType={question.question_type}
+                  index={index}
+                  onAnswerChange={handleAnswerChange}
+                  options={question.options || []}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="quiz-actions">
+          <CheckButton onClick={checkAnswers} />
+          {isQuizChecked && <NewQuizButton />}
         </div>
-    );
+
+        {isQuizChecked && (
+          <div className="quiz-report">
+            <h2>Quiz Results</h2>
+            {quizReport.map((report, index) => (
+              <div key={index} className={`result ${report.is_correct ? "correct" : "incorrect"}`}>
+                <p>Question: {report.question}</p>
+                <p>Your Answer: {report.user_answer}</p>
+                <p>Correct Answer: {report.correct_answer}</p>
+                {report.accuracy_percentage && (
+                  <p>Accuracy: {parseFloat(report.accuracy_percentage).toFixed(2)}%</p>
+                )}
+                <p>Result: {report.result}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        <DownloadQuiz
+          userId={userId}
+          question_type={questionType}
+          numQuestion={numQuestions}
+        />
+      </div>
+      <div>
+        <CheckQuizHistoryButton />
+      </div>
+    </div>
+  );
 };
 
 export default function DisplayQuiz() {
-    const searchParams = useSearchParams();
-    const [quizParams, setQuizParams] = useState({
-        userId: "fakeId",
-        questionType: "multichoice",
-        numQuestions: 1
-    });
-    const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
-   
-    useEffect(() => {
-        const questionType = searchParams.get("questionType") || "multichoice";
-        const numQuestionsString = searchParams.get("numQuestions") || "1";
-        const userId = searchParams.get("userId") || "fakeId";
-        const numQuestions = parseInt(numQuestionsString, 10); // 10 for decimal
-        setQuizParams({
-            userId,
-            questionType,
-            numQuestions
-        });
-
-        const fetchQuizQuestions = async () => {
-            try {
-                const questions: GeneratedQuizModel[] = await determineQuizDisplay(userId, questionType, numQuestions);
-                setQuizQuestions(questions);
-            } catch (error){
-                console.error({message: "error fetching quiz questions", error});
-
-            }
-        };
-        
-        fetchQuizQuestions();
-    }, [searchParams]);
-
-    return (
-      <Suspense fallback={<div>Loading quiz...</div>}>
-        <QuizDisplayPage 
-            quizQuestions={quizQuestions} 
-            userId={quizParams.userId} 
-            questionType={quizParams.questionType}
-            numQuestions={quizParams.numQuestions} 
-        />
-      </Suspense>
-    );
+  return (
+    <Suspense fallback={<div>Loading quiz...</div>}>
+      <QuizDisplayPage />
+    </Suspense>
+  );
 }
