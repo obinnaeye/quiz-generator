@@ -1,5 +1,5 @@
 from typing import Any
-from fastapi import FastAPI, Body, HTTPException
+from fastapi import FastAPI, Body, HTTPException,Depends
 from fastapi.responses import StreamingResponse
 from .api import healthcheck
 import logging
@@ -94,7 +94,7 @@ def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Body(...)) ->
     logger.info("Received query: %s" % query)
     return get_user_quiz_history(query.user_id)
 
-@app.post("/download-quiz")
-async def download_quiz_handler(query: DownloadQuizQuery = Body(...)) -> StreamingResponse:
+@app.get("/download-quiz")
+async def download_quiz_handler(query: DownloadQuizQuery = Depends()) -> StreamingResponse:
     logger.info("Received query: %s" % query)
     return download_quiz(query.format, query.question_type, query.num_question)
