@@ -29,10 +29,20 @@ logging.basicConfig(
     ]
 )
 
+
+
 from .app.db.routes import router as db_router
+from contextlib import asynccontextmanager
+from .app.db.core.connection import startUp
 
-app = FastAPI()
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await startUp()  
+    yield  
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(db_router)
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 logger = logging.getLogger(__name__)
