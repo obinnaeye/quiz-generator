@@ -1,34 +1,36 @@
 services:  
   client:
     build:
-      context: .  # Use the Dockerfile at the root
-      target: frontend-build  # Target only the frontend build stage
+      context: .
+      target: frontend-service
     ports:
-      - "3000:3000"
+      - "${FRONTEND_PORT:-3000}:3000"
     volumes:
       - ./client:/client
     command: ["pnpm", "run", "dev"]
   
   server:
     build:
-      context: .  # Use the Dockerfile at the root
-      target: backend-build  # Target only the backend build stage
+      context: . 
+      target: backend-service 
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     volumes:
       - ./server:/server
-    command: ["pipenv", "run", "fastapi", "dev", "app/main.py", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    environment:
+      - MONGO_URI=${MONGO_URI} 
+      - PYTHONPATH=/
+    command: ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "${BACKEND_PORT:-8000}", "--reload"]
+      
 
   mongodb:  
-    image: mongo:latest  # Use the latest MongoDB image  
-    container_name: quiz_gen  # Adjusted to match your Docker run command  
+    image: mongo:latest    
     ports:  
-      - "27017:27017"  # Expose MongoDB port  
-    environment:  
-      MONGO_INITDB_ROOT_USERNAME: root  # Set the root username (optional)  
-      MONGO_INITDB_ROOT_PASSWORD: example  # Set the root password (optional)  
+      - "${MONGO_PORT:-27017}:27017"   
     volumes:  
-      - mongo_data:/data/db  # Persist data in a named volume  
+      - mongo_data:/data/db
 
 volumes:  
-  mongo_data:  # Define a named volume
+  mongo_data: 
+
+
