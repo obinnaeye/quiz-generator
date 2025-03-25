@@ -8,6 +8,8 @@ fastapi = {extras = ["standard"]}
 uvicorn = "*"
 python-dotenv = "*"
 typing_extensions = "*"
+motor = "*"
+bcrypt = "*"
 docx = "*"
 python-docx = "*"
 reportlab = "*"
