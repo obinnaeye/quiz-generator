@@ -1,5 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
+from typing import Dict, Any, List
 
 from fastapi import FastAPI, Body, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +20,7 @@ from .schemas.query import (
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         logging.StreamHandler()
     ]
@@ -45,7 +46,7 @@ app.include_router(db_router)
 app.include_router(quiz_router, prefix="/api", tags=["quiz"])
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 
-mock_db: list[UserModel] = []
+mock_db: List[UserModel] = []
 
 @app.get("/api")
 def read_root():
@@ -61,7 +62,7 @@ def create_user(user: UserModel):
     mock_db.append(user)
     return user
 
-@app.get("/users/", response_model=list[UserModel])
+@app.get("/users/", response_model=List[UserModel])
 def list_users():
     return mock_db
 
@@ -80,12 +81,12 @@ def login(request: LoginRequestModel):
     return {"message": "Login successful", "user": user}
 
 @app.post("/generate-quiz")
-async def generate_quiz_handler(query: GenerateQuizQuery = Body(...)) -> dict[str, any]:
+async def generate_quiz_handler(query: GenerateQuizQuery = Body(...)) -> Dict[str, Any]:
     logger.info("Received query: %s", query)
     return generate_quiz(query.user_id, query.question_type, query.num_question)
 
 @app.post("/get-user-quiz-history")
-def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Body(...)) -> list:
+def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Body(...)) -> List[Any]:
     logger.info("Received query: %s", query)
     return get_user_quiz_history(query.user_id)
 
