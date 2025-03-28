@@ -39,7 +39,7 @@ services:
       - ./server:/server
     environment:
       - MONGO_URI=${MONGO_URI}
-    command: ["python", "app/seed.py"]
+    command: ["python", "-m", "app.seed"]
     depends_on:
       - server
       - mongodb
