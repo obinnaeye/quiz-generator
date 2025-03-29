@@ -1,5 +1,5 @@
 import React from "react";
-import { GenerateButtonProps } from "../../../interfaces/props";
+import { GenerateButtonProps } from "../../interfaces/props";
 
 const GenerateButton: React.FC<GenerateButtonProps> = ({ onClick }) => {
   return (

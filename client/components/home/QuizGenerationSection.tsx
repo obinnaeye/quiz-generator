@@ -1,4 +1,4 @@
-import { QuizGenerationSectionProps } from "../../../interfaces/props";
+import { QuizGenerationSectionProps } from "../../interfaces/props";
 
 
 export default function QuizGenerationSection({

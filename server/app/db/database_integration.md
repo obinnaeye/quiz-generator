@@ -1,4 +1,3 @@
-
 # MongoDB Database Integration
 
 This documentation provides a detailed explanation of the MongoDB database integration for the Quiz Generator project. It includes instructions on setup, connection, and working with the database in both development and production environments.
@@ -42,6 +41,7 @@ Ensure the following are installed on your development environment:
 The database connection is managed through the `connection.py` file located in the `db/core/` directory. This file establishes the connection to the MongoDB instance and provides access to the necessary collections. Database Indexing is also implemented in this file.
 
 ### Example of `connection.py`
+
 ```python
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -66,6 +66,7 @@ The database consists of the following collections:
 - **Users**: Stores user information like usernames and hashed passwords.
 
 ### Quiz Collection Example
+
 ```json
 {
   "_id": "ObjectId",
@@ -83,19 +84,20 @@ The database consists of the following collections:
 ```
 
 ### User Collection Example
+
 ```json
- {
-    "_id": "ObjectId",
-    "username": "username",
-    "email": "email@example.com",
-    "full_name": "full_name",
-    "quizzes": [],
-    "is_active": true,
-    "role": "user",
-    "created_at": "datatime",
-    "updated_at": "datetime",
-    "hashed_password": "hashedpassword"
-  }
+{
+  "_id": "ObjectId",
+  "username": "username",
+  "email": "email@example.com",
+  "full_name": "full_name",
+  "quizzes": [],
+  "is_active": true,
+  "role": "user",
+  "created_at": "datatime",
+  "updated_at": "datetime",
+  "hashed_password": "hashedpassword"
+}
 ```
 
 ---
@@ -105,16 +107,18 @@ The database consists of the following collections:
 CRUD operations are implemented in the `crud` folder and are structured into separate files for modularity. For example, `quiz_crud.py` handles operations related to quizzes.
 
 ### Example: create Quiz
+
 ```python
 async def create_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_data: dict):
     try:
         new_quiz = await quizzes_collection.insert_one(quiz_data)
         print("new quiz successfully created with id: ", str(new_quiz.inserted_id))
-        return str(new_quiz.inserted_id)  
+        return str(new_quiz.inserted_id)
     except Exception as e:
         print(f"Error occurred while creating quiz: {e}")
-        return None 
+        return None
 ```
+
 ---
 
 ## Database Models and Schemas
@@ -151,7 +155,7 @@ The project uses `seed_data.py` and `seed.py` to seed the database with default 
 
 ## Accessing Seeded Quiz Data
 
-Once the database is seeded, you can access the quiz data  or user data to verify its structure and content. Below are the instructions for retrieving quiz data using both MongoDB Shell and MongoDB Compass.
+Once the database is seeded, you can access the quiz data or user data to verify its structure and content. Below are the instructions for retrieving quiz data using both MongoDB Shell and MongoDB Compass.
 
 ### Using MongoDB Shell
 

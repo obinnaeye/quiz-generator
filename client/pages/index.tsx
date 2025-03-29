@@ -5,7 +5,7 @@ import {
   QuizForm, 
   SignInButton, 
   SignUpButton 
-} from "../components/(public)/home";
+} from "../components/home";
 
 export default function Home() {
   return (
