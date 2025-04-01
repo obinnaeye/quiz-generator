@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SignUpModal from "../../(dashboard)/user/SignUpModal";
+import SignUpModal from "../(dashboard)/user/SignUpModal";
 
 export default function SignUpButton() {
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);

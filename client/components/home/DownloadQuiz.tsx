@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Observable } from 'rxjs';
-import { QueryPattern } from '../../../constants/patterns';
-import { DownloadQuizProps } from '../../../interfaces/props';
+import { QueryPattern } from '../../constants/patterns';
+import { DownloadQuizProps } from '../../interfaces/props';
 
 type FileFormat = 'txt' | 'csv' | 'pdf' | 'docx';
 
