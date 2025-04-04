@@ -1,3 +1,3 @@
 export interface CheckButtonProps {
-    onClick: () => void;
+  onClick: () => void;
 }

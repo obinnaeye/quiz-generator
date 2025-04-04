@@ -64,7 +64,7 @@ const QuizDisplayPage = () => {
       const payload = quizQuestions.map((question, index) => {
         if (!question || !("answer" in question)) {
           throw new Error(
-            `Missing answer for question: ${question?.question || "Unknown Question"}`
+            `Missing answer for question: ${question?.question || "Unknown Question"}`,
           );
         }
         return {
@@ -96,9 +96,13 @@ const QuizDisplayPage = () => {
           return {
             ...report,
             user_answer:
-              report.user_answer === "1" || report.user_answer === 1 ? "true" : "false",
+              report.user_answer === "1" || report.user_answer === 1
+                ? "true"
+                : "false",
             correct_answer:
-              report.correct_answer === "1" || report.correct_answer === 1 ? "true" : "false",
+              report.correct_answer === "1" || report.correct_answer === 1
+                ? "true"
+                : "false",
           };
         }
         return report;
@@ -144,12 +148,18 @@ const QuizDisplayPage = () => {
           <div className="quiz-report">
             <h2>Quiz Results</h2>
             {quizReport.map((report, index) => (
-              <div key={index} className={`result ${report.is_correct ? "correct" : "incorrect"}`}>
+              <div
+                key={index}
+                className={`result ${report.is_correct ? "correct" : "incorrect"}`}
+              >
                 <p>Question: {report.question}</p>
                 <p>Your Answer: {report.user_answer}</p>
                 <p>Correct Answer: {report.correct_answer}</p>
                 {report.accuracy_percentage && (
-                  <p>Accuracy: {parseFloat(report.accuracy_percentage).toFixed(2)}%</p>
+                  <p>
+                    Accuracy:{" "}
+                    {parseFloat(report.accuracy_percentage).toFixed(2)}%
+                  </p>
                 )}
                 <p>Result: {report.result}</p>
               </div>

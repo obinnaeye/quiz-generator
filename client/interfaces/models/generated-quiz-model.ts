@@ -1,5 +1,5 @@
 export interface GeneratedQuizModel {
-    question: string,
-    options?: string[],
-    answer: string | number
+  question: string;
+  options?: string[];
+  answer: string | number;
 }

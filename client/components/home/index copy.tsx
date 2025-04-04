@@ -1,9 +1,11 @@
 "use client";
+
+import SignUpButton from "./components/SignUpButton";
+import SignInButton from "./components/SignInButton";
+import QuizForm from "./components/QuizForm";
+import Navbar from "./components/Navbar";
 import React from "react";
-import Navbar from "../components/home/Navbar";
-import QuizForm from "../components/home/QuizForm";
-import SignInButton from "../components/home/SignInButton";
-import SignUpButton from "../components/home/SignUpButton";
+import { QuizForm, SignInButton, SignUpButton } from "../components/home";
 
 export default function Home() {
   return (
@@ -19,7 +21,8 @@ export default function Home() {
             <SignInButton />
           </div>
         </div>
-        <QuizForm />
+        <QuizForm />{" "}
+        {/* QuizForm handles both form input and quiz generation */}
       </div>
     </div>
   );

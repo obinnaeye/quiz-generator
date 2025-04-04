@@ -3,7 +3,7 @@ import { QueryPattern } from "../../constants/patterns";
 import axios, { AxiosResponse } from "axios";
 
 export const getUserQuizHistory = async (
-  userId: string
+  userId: string,
 ): Promise<GeneratedQuizModel[][] | undefined> => {
   try {
     const { data }: AxiosResponse<any, any> = await axios.post(
@@ -14,7 +14,7 @@ export const getUserQuizHistory = async (
       },
       {
         responseType: "json",
-      }
+      },
     );
     console.log("data", data);
     return data;

@@ -1,5 +1,5 @@
 export interface DownloadQuizProps {
-    userId: string,
-    question_type: string,
-    numQuestion: number
+  userId: string;
+  question_type: string;
+  numQuestion: number;
 }

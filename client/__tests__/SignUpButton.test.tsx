@@ -1,22 +1,21 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import SignUpButton from '../components/SignUpButton';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import SignUpButton from "../components/SignUpButton";
 
-
-describe('SignUpButton', () => {
-  it('renders the sign-up button', () => {
+describe("SignUpButton", () => {
+  it("renders the sign-up button", () => {
     render(<SignUpButton />);
-    expect(screen.getByRole('button', { name: /sign up/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /sign up/i }),
+    ).toBeInTheDocument();
   });
 
-  
-
-  it('closes the modal when the modal close button is clicked', () => {
+  it("closes the modal when the modal close button is clicked", () => {
     render(<SignUpButton />);
-    const button = screen.getByRole('button', { name: /sign up/i });
+    const button = screen.getByRole("button", { name: /sign up/i });
     fireEvent.click(button);
-    const closeButton = screen.getByRole('button', { name: /×/i });
+    const closeButton = screen.getByRole("button", { name: /×/i });
     fireEvent.click(closeButton);
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });
