@@ -14,15 +14,17 @@ This directory contains the backend code for the Quiz App, built using Python Fa
 
 ```bash
 git clone https://github.com/yourusername/quiz-app.git
-cd quiz-app/backend
+cd quiz-generator/server
 ```
 
 ### 2. Create virtual enviroment
+
 Ensure you are in the server directory then run the following command
 
 ```bash
 python -m venv .venv
 ```
+
 ```bash
 source .venv/bin/activate
 ```
@@ -54,7 +56,7 @@ PORT=8000
 Start the FastAPI server with the following command:
 
 ```bash
-fastapi dev app/main.py
+pipenv run fastapi dev main.py
 ```
 
 The API will be accessible at `http://localhost:8000/api`.
@@ -68,5 +70,3 @@ http://localhost:8000/api/healthcheck
 ```
 
 You should receive a JSON response confirming the server is up and running.
-
-
