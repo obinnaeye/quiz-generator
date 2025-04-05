@@ -7,7 +7,7 @@ load_dotenv()
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-SENDER_EMAIL = os.getenv("SENDER_EMAIL")  # Load from .env
+SENDER_EMAIL = os.getenv("SENDER_EMAIL")  
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 
 def send_otp_email(email: str, otp: str, token: str):
