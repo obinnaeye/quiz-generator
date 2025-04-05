@@ -8,3 +8,8 @@ python-dotenv = "*"
 ipython = "*"
 streamlit = "*"
 langchain-openai = "*"
+pytest = "*"
+
+[dev-packages]
+pytest = "*"
+pytest-asyncio = "*"
