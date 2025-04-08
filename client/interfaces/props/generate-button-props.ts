@@ -1,3 +1,3 @@
 export interface GenerateButtonProps {
-    onClick: () => void;
+  onClick: () => void;
 }

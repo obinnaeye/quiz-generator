@@ -1,4 +1,4 @@
 export interface SignInModalProps {
-    isOpen: boolean;
-    onClose: () => void;
+  isOpen: boolean;
+  onClose: () => void;
 }

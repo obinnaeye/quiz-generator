@@ -1,18 +1,20 @@
-'use client'; // Mark this component as a client component
+"use client"; // Mark this component as a client component
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Quiz() {
   const [score, setScore] = useState<number | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams(); 
-  const [parsedQuestions, setParsedQuestions] = useState<{ question: string; answer: string }[]>([]);
+  const searchParams = useSearchParams();
+  const [parsedQuestions, setParsedQuestions] = useState<
+    { question: string; answer: string }[]
+  >([]);
   const [error, setError] = useState<string | null>(null); // Add an error state
 
   useEffect(() => {
-    const query = searchParams.get('questions');
-    
+    const query = searchParams.get("questions");
+
     try {
       const questions = query ? JSON.parse(query) : []; // Safely parse the query
       if (Array.isArray(questions)) {
@@ -36,7 +38,7 @@ export default function Quiz() {
         <h1 className="text-3xl font-bold text-center mb-8">Error</h1>
         <p className="text-center text-red-500">{error}</p>
         <button
-          onClick={() => router.push('/')}
+          onClick={() => router.push("/")}
           className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
         >
           Back to Home
@@ -59,15 +61,20 @@ export default function Quiz() {
               />
             </div>
           ))}
-          <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+          <button
+            type="submit"
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
             Submit Answers
           </button>
         </form>
       ) : (
         <div className="text-center">
-          <h2 className="text-2xl mb-4">Your Score: {score} / {parsedQuestions.length}</h2>
+          <h2 className="text-2xl mb-4">
+            Your Score: {score} / {parsedQuestions.length}
+          </h2>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
             Back to Home

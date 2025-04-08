@@ -1,10 +1,10 @@
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function NewQuizButton() {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push('/'); 
+    router.push("/");
   };
 
   return (

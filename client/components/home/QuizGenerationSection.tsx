@@ -1,6 +1,5 @@
 import { QuizGenerationSectionProps } from "../../interfaces/props";
 
-
 export default function QuizGenerationSection({
   profession,
   setProfession,
@@ -18,7 +17,10 @@ export default function QuizGenerationSection({
       </h2>
 
       <div className="mb-4">
-        <label htmlFor="profession" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="profession"
+          className="block text-sm font-medium text-gray-700"
+        >
           Enter The Concept/Context For This Quiz
         </label>
         <input
@@ -33,7 +35,10 @@ export default function QuizGenerationSection({
       </div>
 
       <div className="mb-4">
-        <label htmlFor="numQuestions" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="numQuestions"
+          className="block text-sm font-medium text-gray-700"
+        >
           Enter Number of Quiz Questions (1-10)
         </label>
         <input
@@ -52,7 +57,10 @@ export default function QuizGenerationSection({
       </div>
 
       <div className="mb-4">
-        <label htmlFor="questionType" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="questionType"
+          className="block text-sm font-medium text-gray-700"
+        >
           Select Quiz Type
         </label>
         <select
@@ -67,7 +75,10 @@ export default function QuizGenerationSection({
         </select>
       </div>
       <div className="mb-4">
-        <label htmlFor="difficultyLevel" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="difficultyLevel"
+          className="block text-sm font-medium text-gray-700"
+        >
           Select Difficulty Level
         </label>
         <select
@@ -83,4 +94,4 @@ export default function QuizGenerationSection({
       </div>
     </section>
   );
-};
+}

@@ -17,7 +17,7 @@ export default function QuizForm() {
     // Check if all required fields are filled out
     if (!profession || !numQuestions || !questionType) {
       setErrorMessage(
-        "Please fill in the topic, select number of questions, and choose a quiz type."
+        "Please fill in the topic, select number of questions, and choose a quiz type.",
       );
       return;
     }

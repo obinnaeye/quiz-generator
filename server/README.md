@@ -18,11 +18,13 @@ cd quiz-generator/server
 ```
 
 ### 2. Create virtual enviroment
+
 Ensure you are in the server directory then run the following command
 
 ```bash
 python -m venv .venv
 ```
+
 ```bash
 source .venv/bin/activate
 ```
@@ -68,4 +70,3 @@ http://localhost:8000/api/healthcheck
 ```
 
 You should receive a JSON response confirming the server is up and running.
-
