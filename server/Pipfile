@@ -16,6 +16,8 @@ reportlab = "*"
 pypdf = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.12"
