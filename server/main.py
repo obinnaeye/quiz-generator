@@ -12,6 +12,7 @@ from .api.v1.crud import download_quiz, generate_quiz, get_user_quiz_history
 from .app.db.routes import router as db_router
 from .app.db.core.connection import startUp
 from server.app.quiz.routers.quiz import router as quiz_router
+from .schemas.model.password_reset_model import PasswordResetRequest, PasswordResetResponse
 from .schemas.model import UserModel, LoginRequestModel, LoginResponseModel
 from .schemas.query import (
     GenerateQuizQuery,
@@ -168,6 +169,36 @@ def login(request: LoginRequestModel):
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return {"message": "Login successful", "user": user}
+
+@app.post("/reset-password", response_model=PasswordResetResponse)
+async def reset_password(request: PasswordResetRequest):
+    user = next((u for u in mock_db if u["email"] == request.email), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if request.reset_method == "otp":
+        stored_otp = redis_client.get(f"otp:{request.email}")
+        if stored_otp is None:
+            raise HTTPException(status_code=400, detail="OTP expired or not found")
+        if request.otp != stored_otp:
+            raise HTTPException(status_code=401, detail="Invalid OTP")
+    
+    elif request.reset_method == "token":
+        if not request.token:
+            raise HTTPException(status_code=400, detail="Token is required")
+        try:
+            email_from_token = decode_verification_token(request.token)
+        except HTTPException as e:
+            raise e
+        if email_from_token != request.email:
+            raise HTTPException(status_code=403, detail="Token email mismatch")
+    
+    user["password"] = request.new_password
+
+    redis_client.delete(f"otp:{request.email}")
+    redis_client.delete(f"token:{request.email}")
+
+    return PasswordResetResponse(message="Password reset successful", success=True)
 
 @app.post("/generate-quiz")
 async def generate_quiz_handler(query: GenerateQuizQuery = Body(...)) -> Dict[str, Any]:
