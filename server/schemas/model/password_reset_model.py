@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, field_validator, model_validator
 from enum import Enum
 import re
 
@@ -27,6 +27,20 @@ class PasswordResetRequest(BaseModel):
             raise ValueError('Password must be at least 8 characters long.')
         return value
 
+    @model_validator(mode="after")
+    def check_required_fields(cls, values):
+            if values.reset_method == ResetMethod.OTP and not values.otp:
+                raise ValueError("OTP is required when reset method is 'otp'")
+            if values.reset_method == ResetMethod.TOKEN and not values.token:
+                raise ValueError("Token is required when reset method is 'token'")
+            return values
+
 class PasswordResetResponse(BaseModel):
     message: str
     success: bool
+
+class RequestPasswordReset(BaseModel):
+    email: EmailStr
+
+class MessageResponse(BaseModel):
+    message: str

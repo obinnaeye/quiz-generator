@@ -12,7 +12,7 @@ from .api.v1.crud import download_quiz, generate_quiz, get_user_quiz_history
 from .app.db.routes import router as db_router
 from .app.db.core.connection import startUp
 from server.app.quiz.routers.quiz import router as quiz_router
-from .schemas.model.password_reset_model import PasswordResetRequest, PasswordResetResponse
+from .schemas.model.password_reset_model import PasswordResetRequest, PasswordResetResponse, RequestPasswordReset, MessageResponse
 from .schemas.model import UserModel, LoginRequestModel, LoginResponseModel
 from .schemas.query import (
     GenerateQuizQuery,
@@ -39,7 +39,7 @@ import random
 import os
 from dotenv import load_dotenv
 from server.celery_config import celery
-from server.tasks import send_otp_task
+from server.tasks import send_otp_task, send_password_reset_email
 from server.email_utils import send_otp_email
 import jwt
 from datetime import datetime, timedelta
@@ -169,6 +169,22 @@ def login(request: LoginRequestModel):
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     return {"message": "Login successful", "user": user}
+
+@app.post("/request-password-reset", response_model=MessageResponse)
+async def request_password_reset(request: RequestPasswordReset):
+    user = next((u for u in mock_db if u["email"] == request.email), None)
+    if not user:
+        return {"message": "If this email exists, reset instructions have been sent."}
+    
+    otp = generate_otp()
+    token = generate_verification_token(request.email)
+    
+    redis_client.setex(f"otp:{request.email}", 300, otp)
+    redis_client.setex(f"token:{request.email}", 1800, token)
+    
+    send_password_reset_email.delay(request.email, otp, token) 
+
+    return {"message": "If this email exists, reset instructions have been sent."}
 
 @app.post("/reset-password", response_model=PasswordResetResponse)
 async def reset_password(request: PasswordResetRequest):

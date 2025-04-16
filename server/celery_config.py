@@ -1,4 +1,7 @@
 from celery import Celery
+import logging
+
+logger = logging.getLogger(__name__)
 
 celery = Celery(
     "tasks",
@@ -12,4 +15,6 @@ celery.conf.update(
     result_serializer="json",
     accept_content=["json"]
 )
+
+logger.info("Celery configured and ready to go.")
 
