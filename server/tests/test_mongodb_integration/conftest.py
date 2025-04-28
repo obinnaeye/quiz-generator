@@ -1,4 +1,3 @@
-# tests/conftest.py
 import pytest
 import pytest_asyncio
 from testcontainers.mongodb import MongoDbContainer
@@ -7,14 +6,9 @@ from ...app.databaseSeeding import seed_quizzes_collection, seed_users_collectio
 from ...app.seed_data import seed_quizzes, seed_user_data
 
 
-@pytest.fixture(scope="session")
-def anyio_backend():
-    return "asyncio"
-
 
 @pytest.fixture(scope="session")
 def mongo_container():
-    # Context manager already starts the container
     with MongoDbContainer("mongo:latest") as mongo:
         yield mongo
 
@@ -24,26 +18,22 @@ async def motor_client(mongo_container):
     uri = mongo_container.get_connection_url()
     client = AsyncIOMotorClient(uri)
     yield client
-    client.close()  # ensure clean teardown
+    client.close() 
 
 
 @pytest_asyncio.fixture(scope="function")
 async def test_db(motor_client):
-    db = motor_client.test_db  # use any name here
-    # Clean all collections before each test
+    db = motor_client.test_db 
     for name in await db.list_collection_names():
         await db.drop_collection(name)
     yield db
 
 
 @pytest_asyncio.fixture(scope="function")
-async def seed_database(test_db):
-    # Seed async
+async def seeded_database(test_db):
     await seed_users_collection(test_db["users"], seed_user_data)
     await seed_quizzes_collection(test_db["quizzes"], seed_quizzes)
-    yield test_db  # yield the seeded db in case tests want to access it
-
-
+    yield test_db 
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)

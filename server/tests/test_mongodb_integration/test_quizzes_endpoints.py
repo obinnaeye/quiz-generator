@@ -50,8 +50,8 @@ def updated_quiz():
 
 
 @pytest_asyncio.fixture(scope="function")
-async def client(seed_database):
-    test_quizzes_collection = seed_database["quizzes"]
+async def client(seeded_database):
+    test_quizzes_collection = seeded_database["quizzes"]
     app.dependency_overrides[quizzes.get_quizzes_collection] = lambda: test_quizzes_collection
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as c:
         yield c
@@ -61,9 +61,6 @@ async def client(seed_database):
 async def created_quiz(client, sample_quiz):
     response = await client.post("/quizzes/test/create-quiz", json=sample_quiz)
     return response.json()
-
-
-
 
 
 @pytest.mark.asyncio

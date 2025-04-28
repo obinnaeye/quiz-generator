@@ -46,7 +46,7 @@ def update_user_data():
 @pytest_asyncio.fixture(scope="function")
 async def new_user(test_db, sample_user_data):
     new_user = await create_user(test_db["users"], sample_user_data)
-    return new_user.id, new_user.email
+    return new_user
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -111,7 +111,7 @@ async def test_create_user(test_db, sample_user_data):
 
 @pytest.mark.asyncio
 async def test_get_user_by_id(test_db, new_user, sample_user_data):
-    user_id, _ = new_user
+    user_id = new_user.id
     user = await get_user_by_id(test_db["users"], user_id)
 
     assert user is not None
@@ -126,7 +126,7 @@ async def test_get_user_by_id(test_db, new_user, sample_user_data):
 
 @pytest.mark.asyncio
 async def test_get_user_by_email(test_db, new_user, sample_user_data):
-    _, user_email = new_user
+    user_email = new_user.email
     user = await get_user_by_email(test_db["users"], user_email)
 
     assert user is not None
@@ -140,7 +140,7 @@ async def test_get_user_by_email(test_db, new_user, sample_user_data):
 
 @pytest.mark.asyncio
 async def test_update_user(test_db, new_user, update_user_data):
-    user_id, _ = new_user
+    user_id = new_user.id
     updated_user = await update_user(test_db["users"], user_id, update_user_data)
 
     assert updated_user is not None
@@ -156,7 +156,7 @@ async def test_update_user(test_db, new_user, update_user_data):
 
 @pytest.mark.asyncio
 async def test_delete_user(test_db, new_user):
-    user_id, _ = new_user
+    user_id = new_user.id
     response = await delete_user(test_db["users"], user_id)
 
     assert response is not None
@@ -165,8 +165,8 @@ async def test_delete_user(test_db, new_user):
 
 
 @pytest.mark.asyncio
-async def test_list_users(seed_database):
-    users = await list_users(seed_database["users"])
+async def test_list_users(seeded_database):
+    users = await list_users(seeded_database["users"])
 
     assert isinstance(users, list)
     assert any(user.username == "jane_smith" for user in users)
@@ -219,8 +219,8 @@ async def test_delete_quiz(test_db, new_quiz):
 
 
 @pytest.mark.asyncio
-async def test_list_quizzes(seed_database):
-    quizzes_cursor = seed_database["quizzes"].find({})
+async def test_list_quizzes(seeded_database):
+    quizzes_cursor = seeded_database["quizzes"].find({})
     quizzes = await quizzes_cursor.to_list()
 
     assert any(quiz["description"] == "Assess your understanding of agricultural practices and food production." for quiz in quizzes)

@@ -31,8 +31,8 @@ def updated_user():
 
 
 @pytest_asyncio.fixture(scope="function")
-async def client(seed_database):
-    test_users_collection = seed_database["users"]
+async def client(seeded_database):
+    test_users_collection = seeded_database["users"]
     app.dependency_overrides[users.get_users_collection] = lambda: test_users_collection
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as c:
         yield c
@@ -42,10 +42,6 @@ async def client(seed_database):
 async def created_user(client, sample_user):
     response = await client.post("/users/test/create-user", json=sample_user)
     return response.json()
-
-
-
-
 
 
 
@@ -196,8 +192,8 @@ async def test_user_deletion_removes_user(client, created_user):
 
 
 @pytest.mark.asyncio
-async def test_list_users_empty(client, seed_database):
-    await seed_database["users"].drop()  # Clear test data
+async def test_list_users_empty(client, seeded_database):
+    await seeded_database["users"].drop()
     response = await client.get("/users/test/list-users")
 
     assert response.status_code == 200
