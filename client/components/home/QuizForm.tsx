@@ -4,6 +4,7 @@ import { useState } from "react";
 import { GenerateButton } from "./GenerateButton";
 import QuizGenerationSection from "./QuizGenerationSection";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function QuizForm() {
   const [profession, setProfession] = useState("");
@@ -25,22 +26,18 @@ export default function QuizForm() {
 
     setErrorMessage("");
     try {
-      const response = await fetch("http://localhost:8000/api/get-questions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      const { data } = await axios.post(
+        "http://localhost:8000/api/get-questions",
+        {
           profession,
           audience_type: audienceType,
           custom_instruction: customInstruction,
           num_questions: numQuestions,
           question_type: questionType,
           difficulty_level: difficultyLevel,
-        }),
-      });
+        },
+      );
 
-      if (!response.ok) throw new Error("Failed to generate quiz");
-
-      const data = await response.json();
       console.log("Quiz data:", data);
 
       const userId = "userId";
