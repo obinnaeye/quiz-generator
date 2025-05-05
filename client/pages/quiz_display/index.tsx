@@ -28,9 +28,7 @@ const QuizDisplayPage = () => {
         const url = `http://localhost:8000/api/get-questions`;
         const response = await fetch(url, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             question_type: questionType,
             num_questions: numQuestions,
@@ -38,10 +36,11 @@ const QuizDisplayPage = () => {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch quiz questions");
+          throw new Error(`Failed to fetch quiz questions: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log("Fetched questions:", data);
         setQuizQuestions(data);
         setUserAnswers(Array(data.length).fill(""));
       } catch (error) {
@@ -58,56 +57,80 @@ const QuizDisplayPage = () => {
     setUserAnswers(updatedAnswers);
   };
 
-  // Updated checkAnswers function to convert binary answers for true-false questions
   const checkAnswers = async () => {
     try {
+      console.log("User answers before grading:", userAnswers);
+
       const payload = quizQuestions.map((question, index) => {
-        if (!question || !("answer" in question)) {
+        // support both 'answer' and 'correct_answer' keys
+        const correctValue =
+          question.answer !== undefined
+            ? question.answer
+            : question.correct_answer;
+        if (correctValue === undefined) {
           throw new Error(
-            `Missing answer for question: ${question?.question || "Unknown Question"}`
+            `Missing answer field for question: ${question?.question}`,
           );
         }
         return {
           question: question.question,
           user_answer: userAnswers[index].toString(),
-          correct_answer: question.answer.toString(),
+          correct_answer: correctValue.toString(),
           question_type: question.question_type,
         };
       });
 
+      console.log("Payload sent to grade-answers:", payload);
+
       const response = await fetch("http://localhost:8000/api/grade-answers", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        // Send payload as an array to match the expected Pydantic model.
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
+      console.log(
+        "grade-answers response:",
+        response.status,
+        response.statusText,
+      );
+      const text = await response.text();
+      console.log("grade-answers raw text:", text);
+
       if (!response.ok) {
-        throw new Error("Error grading quiz");
+        throw new Error(
+          `Error grading quiz: ${response.status} ${response.statusText}`,
+        );
       }
 
-      const gradedReport = await response.json();
+      // parse JSON after logging raw text
+      const gradedReport = JSON.parse(text);
+      console.log("Parsed gradedReport:", gradedReport);
 
-      // Transform binary values for true-false questions into "true" or "false"
       const transformedReport = gradedReport.map((report: any) => {
         if (report.question_type === "true-false") {
           return {
             ...report,
             user_answer:
-              report.user_answer === "1" || report.user_answer === 1 ? "true" : "false",
+              report.user_answer === "1" || report.user_answer === 1
+                ? "true"
+                : "false",
             correct_answer:
-              report.correct_answer === "1" || report.correct_answer === 1 ? "true" : "false",
+              report.correct_answer === "1" || report.correct_answer === 1
+                ? "true"
+                : "false",
           };
         }
         return report;
       });
 
+      console.log(
+        "Final transformedReport (length=" + transformedReport.length + "):",
+        transformedReport,
+      );
       setQuizReport(transformedReport);
       setIsQuizChecked(true);
     } catch (error) {
-      console.error("Error grading quiz:", error);
+      console.error("Error in checkAnswers():", error);
     }
   };
 
@@ -144,18 +167,25 @@ const QuizDisplayPage = () => {
           <div className="quiz-report">
             <h2>Quiz Results</h2>
             {quizReport.map((report, index) => (
-              <div key={index} className={`result ${report.is_correct ? "correct" : "incorrect"}`}>
+              <div
+                key={index}
+                className={`result ${report.is_correct ? "correct" : "incorrect"}`}
+              >
                 <p>Question: {report.question}</p>
                 <p>Your Answer: {report.user_answer}</p>
                 <p>Correct Answer: {report.correct_answer}</p>
                 {report.accuracy_percentage && (
-                  <p>Accuracy: {parseFloat(report.accuracy_percentage).toFixed(2)}%</p>
+                  <p>
+                    Accuracy:{" "}
+                    {parseFloat(report.accuracy_percentage).toFixed(2)}%
+                  </p>
                 )}
                 <p>Result: {report.result}</p>
               </div>
             ))}
           </div>
         )}
+
         <DownloadQuiz
           userId={userId}
           question_type={questionType}
