@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GenerateButton } from "./GenerateButton";
+import GenerateButton from "./GenerateButton";
 import QuizGenerationSection from "./QuizGenerationSection";
 import { useRouter } from "next/navigation";
 import axios from "axios";

@@ -1,12 +1,17 @@
-import React from 'react';
-import { CheckButtonProps } from '../../interfaces/props';
+// client/components/home/CheckQuizButton.tsx
+"use client";
+
+import React from "react";
+
+interface CheckButtonProps {
+  onClick: () => void;
+}
 
 export default function CheckButton({ onClick }: CheckButtonProps) {
   return (
     <button
-      type="button"
       onClick={onClick}
-      className="bg-green-500 text-white font-bold px-4 py-2 rounded hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
+      className="bg-[#0a3264] hover:bg-[#082952] text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-sm"
     >
       Check Quiz
     </button>

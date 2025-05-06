@@ -1,3 +1,5 @@
+"use client ";
+
 import React, { useState } from "react";
 import SignInButton from "./SignInButton";
 import SignUpButton from "./SignUpButton";
