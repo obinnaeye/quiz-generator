@@ -22,3 +22,10 @@ async def ensure_user_indexes(users_collection: AsyncIOMotorCollection):
 
 async def startUp():
     await ensure_user_indexes(users_collection)
+
+def get_users_collection() -> AsyncIOMotorCollection:
+    return users_collection
+
+def get_quizzes_collection() -> AsyncIOMotorCollection:
+    return quizzes_collection
+
