@@ -1,15 +1,13 @@
 import React from "react";
 import { GenerateButtonProps } from "../../interfaces/props";
 
-const GenerateButton: React.FC<GenerateButtonProps> = ({ onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-    >
-      Generate Quiz
-    </button>
-  );
-};
+const GenerateButton: React.FC<GenerateButtonProps> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="w-full bg-[#0a3264] text-white font-semibold py-3 rounded-xl shadow-md hover:bg-[#082952] transition text-lg"
+  >
+    Generate Quiz
+  </button>
+);
 
 export default GenerateButton;
