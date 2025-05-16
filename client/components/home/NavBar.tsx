@@ -1,6 +1,8 @@
-"use client ";
+// components/home/NavBar.tsx
+"use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import SignInButton from "./SignInButton";
 import SignUpButton from "./SignUpButton";
 import QuizDropdown from "./QuizDropdown";
@@ -15,7 +17,7 @@ const NavBar: React.FC = () => {
 
   return (
     <>
-      {/* Sidebar Toggle Button - fixed, visible, and above all */}
+      {/* Sidebar Toggle */}
       <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="fixed top-4 left-4 z-[100] text-[#0F2654] text-2xl focus:outline-none bg-[#E0E2E5] p-2 rounded-full shadow-md"
@@ -33,11 +35,13 @@ const NavBar: React.FC = () => {
         <Sidebar />
       </div>
 
-      {/* Navigation Bar */}
+      {/* Main Nav */}
       <nav className="bg-[#E0E2E5] shadow-md fixed top-0 left-0 right-0 z-40 h-16 flex items-center">
         <div className="max-w-6xl w-full mx-auto px-6 flex items-center justify-between">
-          {/* Left: Logo */}
-          <h1 className="text-3xl font-bold text-[#0F2654]">HQuiz</h1>
+          {/* Logo */}
+          <Link href="/" className="text-3xl font-bold text-[#0F2654]">
+            HQuiz
+          </Link>
 
           {/* Center Links */}
           <div className="flex items-center space-x-8">
@@ -55,7 +59,7 @@ const NavBar: React.FC = () => {
         </div>
       </nav>
 
-      {/* Spacer to offset fixed navbar */}
+      {/* Spacer */}
       <div className="h-16" />
     </>
   );
