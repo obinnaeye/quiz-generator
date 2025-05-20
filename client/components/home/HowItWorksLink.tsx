@@ -1,12 +1,17 @@
+// components/sidebar/HowItWorksLink.tsx
+"use client";
+
 import React from "react";
+import Link from "next/link";
 
 const HowItWorksLink: React.FC = () => (
-  <a
-    href="#how-it-works"
+  <Link
+    href="/#how-it-works"
+    scroll={true}
     className="text-base font-semibold text-black hover:opacity-80 transition"
   >
     How It Works
-  </a>
+  </Link>
 );
 
 export default HowItWorksLink;
