@@ -1,64 +1,94 @@
 import { SignUpModalProps } from "../../../interfaces/props";
+import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 
 export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white rounded-2xl w-full max-w-md p-8">
         <div className="relative">
-          <h2 className="text-2xl font-semibold mb-4">Sign Up</h2>
+          <h2 className="text-2xl font-semibold text-center text-[#143E6F] font-serif mb-6">
+            Sign Up
+          </h2>
           <button
             onClick={onClose}
-            className="absolute top-0 right-0 text-gray-500 hover:text-gray-700 text-2xl"
+            className="absolute top-0 right-0 text-gray-400 hover:text-gray-600 text-2xl"
           >
             &times;
           </button>
         </div>
+
         <form>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2" htmlFor="name">
-              Name
+              Enter Full Name
             </label>
             <input
               type="text"
               id="name"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Enter Name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
               required
             />
           </div>
+
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2" htmlFor="email">
-              Email
+              Enter Email Address
             </label>
             <input
               type="email"
               id="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Email"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
               required
             />
           </div>
+
           <div className="mb-6">
             <label
               className="block text-sm font-medium mb-2"
               htmlFor="password"
             >
-              Password
+              Choose Password
             </label>
             <input
               type="password"
               id="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              placeholder="Password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md"
               required
             />
           </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+            className="w-full bg-[#143E6F] text-white py-2 rounded-md font-medium mb-6"
           >
             Sign Up
           </button>
         </form>
+
+        {/* Google Sign Up */}
+        <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2 mb-4">
+          <FaGoogle className="mr-2 text-lg text-red-500" />
+          <span className="text-sm font-medium">Sign Up with Google</span>
+        </button>
+
+        {/* LinkedIn Sign Up */}
+        <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2">
+          <FaLinkedinIn className="mr-2 text-lg text-blue-700" />
+          <span className="text-sm font-medium">Sign Up with LinkedIn</span>
+        </button>
+
+        {/* Login Redirect */}
+        <div className="text-center mt-6 text-sm">
+          Already Have An Account?{" "}
+          <button className="text-gray-400 hover:text-gray-600 underline">
+            Login
+          </button>
+        </div>
       </div>
     </div>
   );

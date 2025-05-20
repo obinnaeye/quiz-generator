@@ -27,7 +27,7 @@ export default function HowItWorksSection() {
   return (
     <section id="how-it-works" className="bg-gray-100 py-12 px-4">
       <h2 className="text-2xl font-bold text-center mb-10">How It Works</h2>
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6">
         {steps.map((stepObj, i) => (
           <div key={i} className="bg-white p-6 rounded shadow-md">
             <p className="font-bold mb-1">{stepObj.step}</p>

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import NavBar from "../components/home/NavBar";
 import Footer from "../components/home/Footer";
 import PricingSection from "../components/home/PricingSection";
@@ -36,11 +37,15 @@ export default function Home() {
 
         {/* Illustration */}
         <div className="w-full max-w-5xl mx-auto px-4 mb-12">
-          <img
-            src="/images/study.jpg"
-            alt="Students using quiz app"
-            className="w-full h-auto rounded shadow-md"
-          />
+          <div className="scale-x-110">
+            <Image
+              src="/images/hquiz1.png"
+              alt="Quiz Example"
+              width={1000}
+              height={500}
+              className="rounded shadow max-w-6xl mx-auto"
+            />
+          </div>
         </div>
 
         {/* Quiz Here */}
@@ -51,26 +56,28 @@ export default function Home() {
               {
                 title: "Generate Quiz",
                 desc: "Effortlessly create customized quizzes on any topic. Our smart quiz generator crafts tailored questions on any subject.",
-                img: "/images/quiz1.jpg",
+                img: "/images/hquiz2.png",
               },
               {
                 title: "Your Quiz Result",
                 desc: "Display all generated quizzes with answers. Export quiz to PDF, text or platform format if applicable.",
-                img: "/images/quiz2.jpg",
+                img: "/images/hquiz3.png",
               },
               {
                 title: "Explore Template",
                 desc: "Users can input one question for quick answers. Shows AI-generated answers immediately below input.",
-                img: "/images/quiz3.jpg",
+                img: "/images/hquiz4.png",
               },
             ].map((item, i) => (
               <div
                 key={i}
                 className="bg-white rounded shadow-md overflow-hidden"
               >
-                <img
+                <Image
                   src={item.img}
                   alt={item.title}
+                  width={500}
+                  height={200}
                   className="w-full h-40 object-cover"
                 />
                 <div className="p-4">
