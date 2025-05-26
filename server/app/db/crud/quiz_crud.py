@@ -8,7 +8,7 @@ from ..schemas.quiz_schemas import (
     DeleteQuizResponse
     )
 import logging
-from typing import Optional
+from typing import Optional, List
 from pymongo import ReturnDocument
 from pymongo.errors import PyMongoError
 from bson.errors import InvalidId
@@ -90,3 +90,26 @@ async def delete_quiz(quizzes_collection: AsyncIOMotorCollection, quiz_id: str) 
         logger.error(f"Error deleting quiz: {e}")
     return DeleteQuizResponse(message="An error occurred while deleting the quiz", delete_count=0)
 
+
+async def list_quizzes(quizzes_collection: AsyncIOMotorCollection) -> List[QuizSchema]:
+    try:
+        quizzes_cursor = quizzes_collection.find({})
+        quizzes = await quizzes_cursor.to_list(length=8)
+
+        return [
+        QuizSchema(
+        id=str(quiz["_id"]),
+        title=quiz["title"],
+        description=quiz["description"],
+        quiz_type=quiz["quiz_type"],
+        owner_id=quiz["owner_id"],
+        created_at=quiz["created_at"],
+        updated_at=quiz["updated_at"],
+        questions=quiz["questions"]
+        )
+        for quiz in quizzes
+        ]
+
+    except PyMongoError as e:
+        logger.error(f"Database error while listing quizzes: {e}")
+    return []

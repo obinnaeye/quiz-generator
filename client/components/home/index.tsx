@@ -11,3 +11,5 @@ export { default as SignInButton } from "./SignInButton";
 export { default as SignUpButton } from "./SignUpButton";
 export { default as NavBar } from "./NavBar";
 export { default as Footer } from "./Footer";
+export { default as DisplaySharedQuiz } from "./DisplaySharedQuiz";
+export { default as ShareButton } from "./ShareButton";
