@@ -8,6 +8,7 @@ from ..auth.services import (
     login_service,
     request_password_reset_service,
     reset_password_service,
+    get_current_user,
     logout_service
 )
 from server.app.auth.utils import generate_otp, generate_verification_token, decode_verification_token
@@ -45,6 +46,10 @@ async def request_password_reset(request: RequestPasswordReset):
 @router.post("/reset-password", response_model=PasswordResetResponse)
 async def reset_password(request: PasswordResetRequest):
     return await reset_password_service(request)
+
+@router.get("/me")
+def get_me(current_user: dict = Depends(get_current_user)):
+    return {"message": "Access granted", "user": current_user}
 
 @router.post("/logout")
 def logout(token: str = Depends(oauth2_scheme)):

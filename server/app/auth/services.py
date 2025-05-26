@@ -1,10 +1,11 @@
-from fastapi import Request, HTTPException, Depends
+from fastapi import Request, HTTPException, Depends, status
 from server.schemas.model import UserModel, LoginRequestModel, PasswordResetRequest, PasswordResetResponse, RequestPasswordReset, MessageResponse
 from ..auth.utils import generate_otp, generate_verification_token, decode_verification_token
 from redis import Redis
 import random
 from datetime import datetime, timezone, timedelta
 import jwt
+from jwt import PyJWTError, ExpiredSignatureError
 import os
 from server.email_utils import send_otp_email
 from fastapi.security import OAuth2PasswordBearer
@@ -14,6 +15,7 @@ redis_client = Redis(host="localhost", port=6379, db=0, decode_responses=True)
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -76,7 +78,7 @@ def login_service(request: LoginRequestModel):
             u for u in mock_db
             if (u["username"] == request.username_or_email or u["email"] == request.username_or_email)
             and u["password"] == request.password
-            and u.get("is_verified", False)  # ✅ check if user is verified
+            and u.get("is_verified", False)
         ),
         None
     )
@@ -84,10 +86,12 @@ def login_service(request: LoginRequestModel):
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid credentials or user not verified")
 
+    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     token_data = {
         "sub": user["email"],
-        "exp": (datetime.now(timezone.utc) + timedelta(hours=1)).replace(tzinfo=None)
+        "exp": int(expire.timestamp())  # JWT expects a Unix timestamp for exp
     }
+
     access_token = jwt.encode(token_data, SECRET_KEY, algorithm=ALGORITHM)
 
     return {
@@ -140,6 +144,34 @@ async def reset_password_service(request: PasswordResetRequest):
 
     return PasswordResetResponse(message="Password reset successful", success=True)
 
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    if redis_client.get(f"blacklist:{token}"):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has been blacklisted. Please log in again.",
+        )
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("sub")
+
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token payload invalid: missing user ID",
+            )
+
+        return {"user_id": user_id}
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired"
+        )
+    except PyJWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+        )
+
 def logout_service(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -147,18 +179,20 @@ def logout_service(token: str = Depends(oauth2_scheme)):
 
         if exp is None:
             raise HTTPException(status_code=400, detail="Invalid token")
-
-        # Calculate remaining time before expiration
+        
         remaining_time = exp - int(datetime.now(timezone.utc).timestamp())
         if remaining_time <= 0:
             raise HTTPException(status_code=400, detail="Token already expired")
 
-        # Add token to Redis blacklist with TTL until expiration
         redis_client.setex(f"blacklist:{token}", remaining_time, "true")
 
         return {"message": "Logout successful"}
-    
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has already expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has already expired"
+        )
+    except PyJWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+        )

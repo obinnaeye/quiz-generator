@@ -70,10 +70,6 @@ def read_root():
 
 load_dotenv()  
 
-@app.get("/")
-def root():
-    return {"message": "Welcome to Quiz Generator API"}
-
 @app.get("/users/", response_model=List[UserModel])
 def list_users():
     return mock_db
