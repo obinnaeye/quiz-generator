@@ -1,4 +1,3 @@
-// client/pages/quiz_display/index.tsx
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
@@ -11,6 +10,7 @@ import {
   DownloadQuizButton,
   NavBar,
   Footer,
+  ShareButton,
 } from "../../components/home";
 
 const QuizDisplayPage: React.FC = () => {
@@ -87,15 +87,12 @@ const QuizDisplayPage: React.FC = () => {
       <NavBar />
 
       <main className="flex-1 flex justify-center px-4 py-8">
-        {/* Centered Quiz Card */}
         <div className="w-full max-w-3xl space-y-8">
-          {/* Quiz Questions Card */}
           <section className="bg-white shadow rounded-xl px-6 py-8 border border-gray-200">
             <h1 className="text-2xl font-bold text-[#0F2654] mb-6">
               {`${questionType.charAt(0).toUpperCase() + questionType.slice(1)} Quiz`}
             </h1>
 
-            {/* Questions */}
             <div className="space-y-6">
               {quizQuestions.map((q, i) => (
                 <div
@@ -115,7 +112,6 @@ const QuizDisplayPage: React.FC = () => {
               ))}
             </div>
 
-            {/* Actions */}
             <div className="mt-6 flex space-x-4">
               <CheckButton onClick={checkAnswers} />
               <DownloadQuizButton
@@ -123,11 +119,11 @@ const QuizDisplayPage: React.FC = () => {
                 question_type={questionType}
                 numQuestion={numQuestions}
               />
+              <ShareButton />
               {isQuizChecked && <NewQuizButton />}
             </div>
           </section>
 
-          {/* Quiz Results Card */}
           {isQuizChecked && (
             <section className="bg-white shadow rounded-xl px-6 py-8 border border-gray-200">
               <h2 className="text-2xl font-bold text-[#0F2654] mb-4">
@@ -165,7 +161,6 @@ const QuizDisplayPage: React.FC = () => {
                 ))}
               </div>
 
-              {/* Upgrade & New Quiz */}
               <div className="mt-6 flex space-x-4">
                 <button className="bg-[#0a3264] hover:bg-[#082952] text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-sm">
                   Upgrade Plan to Save your Quiz

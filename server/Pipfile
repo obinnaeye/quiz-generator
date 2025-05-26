@@ -15,6 +15,7 @@ python-docx = "*"
 reportlab = "*"
 testcontainers = "*"
 pypdf = "*"
+celery = "*"
 
 [dev-packages]
 pytest = "*"
