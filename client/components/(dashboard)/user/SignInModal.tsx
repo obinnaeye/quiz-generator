@@ -1,8 +1,13 @@
+// /components/SignInModal.tsx
 import { SignInModalProps } from "../../../interfaces/props";
 import { useState } from "react";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 
-const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
+const SignInModal: React.FC<SignInModalProps> = ({
+  isOpen,
+  onClose,
+  switchToSignUp,
+}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -72,7 +77,7 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
               type="button"
               className="text-[#143E6F] hover:underline"
               onClick={() => {
-                /* handle forgot password */
+                /* handle forgot password if you have logic */
               }}
             >
               Forgot Password
@@ -90,20 +95,21 @@ const SignInModal: React.FC<SignInModalProps> = ({ isOpen, onClose }) => {
         {/* Social Buttons */}
         <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2 mb-4">
           <FaGoogle className="mr-2 text-lg text-red-500" />
-          <span className="text-sm font-medium">Sign Up with Google</span>
+          <span className="text-sm font-medium">Sign In with Google</span>
         </button>
 
         <button className="w-full flex items-center justify-center border border-gray-300 rounded-md py-2">
           <FaLinkedinIn className="mr-2 text-lg text-blue-700" />
-          <span className="text-sm font-medium">Sign Up with LinkedIn</span>
+          <span className="text-sm font-medium">Sign In with LinkedIn</span>
         </button>
 
-        {/* Footer */}
+        {/* Footer: switch to Sign Up */}
         <div className="text-center mt-6 text-sm">
           Don’t Have An Account?{" "}
           <button
             onClick={() => {
-              /* switch to Sign Up modal */
+              onClose(); // close Login modal
+              switchToSignUp(); // open Sign‑Up modal
             }}
             className="text-gray-400 hover:text-gray-600 underline"
           >

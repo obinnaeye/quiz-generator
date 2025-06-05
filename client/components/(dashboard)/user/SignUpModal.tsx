@@ -1,7 +1,12 @@
+// /components/SignUpModal.tsx
 import { SignUpModalProps } from "../../../interfaces/props";
 import { FaGoogle, FaLinkedinIn } from "react-icons/fa";
 
-export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
+export default function SignUpModal({
+  isOpen,
+  onClose,
+  switchToSignIn,
+}: SignUpModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -85,7 +90,13 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
         {/* Login Redirect */}
         <div className="text-center mt-6 text-sm">
           Already Have An Account?{" "}
-          <button className="text-gray-400 hover:text-gray-600 underline">
+          <button
+            onClick={() => {
+              onClose(); // First close this Sign‑Up modal
+              switchToSignIn(); // Then tell parent to open the Login modal
+            }}
+            className="text-gray-400 hover:text-gray-600 underline"
+          >
             Login
           </button>
         </div>

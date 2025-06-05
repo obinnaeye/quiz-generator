@@ -17,41 +17,48 @@ export default function Home() {
       <NavBar />
 
       <main className="flex-grow">
-        {/* Hero */}
-        <section className="text-center py-16 px-4 bg-white">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
+        {/* ───── HERO ───── */}
+        <section className="bg-white text-center px-4 sm:px-6 md:px-8 py-12 md:py-16">
+          <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4">
             Instant <span className="text-[#0F2654]">Quizzes</span>, Smart{" "}
             <span className="text-[#0F2654]">Answers</span>
           </h1>
-          <p className="mb-6 text-gray-600">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-6 max-w-xl mx-auto">
             Create engaging quizzes and get answers in seconds. Make learning
             fun and effortless!
           </p>
           <button
             onClick={() => router.push("/generate")}
-            className="bg-[#0F2654] text-white px-6 py-3 rounded-2xl hover:bg-[#0C2142] transition"
+            className="
+              bg-[#0F2654] text-white 
+              px-5 py-2 rounded-2xl 
+              text-sm sm:text-base md:text-lg 
+              hover:bg-[#0C2142] transition
+            "
           >
             Get Started for Free
           </button>
         </section>
 
-        {/* Illustration */}
-        <div className="w-full max-w-5xl mx-auto px-4 mb-12">
-          <div className="scale-x-110">
+        {/* ───── ILLUSTRATION ───── */}
+        <div className="w-full px-4 sm:px-6 md:px-8 mb-12">
+          <div className="mx-auto max-w-screen-md">
             <Image
               src="/images/hquiz1.png"
               alt="Quiz Example"
               width={1000}
               height={500}
-              className="rounded shadow max-w-6xl mx-auto"
+              className="w-full h-auto rounded-lg shadow"
             />
           </div>
         </div>
 
-        {/* Quiz Here */}
-        <section className="max-w-6xl mx-auto px-4 py-12">
-          <h2 className="text-2xl font-bold mb-8 text-center">Quiz Here</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+        {/* ───── QUIZ CARDS ───── */}
+        <section className="px-4 sm:px-6 md:px-8 py-8 md:py-12 max-w-screen-lg mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-center">
+            Quiz Here
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
                 title: "Generate Quiz",
@@ -71,21 +78,26 @@ export default function Home() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="bg-white rounded shadow-md overflow-hidden"
+                className="
+                  bg-white rounded-lg shadow-md 
+                  flex flex-col 
+                  overflow-hidden
+                "
               >
-                <Image
-                  src={item.img}
-                  alt={item.title}
-                  width={500}
-                  height={200}
-                  className="w-full h-40 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg text-[#0F2654]">
+                <div className="h-40 md:h-48 w-full relative">
+                  <Image
+                    src={item.img}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4 flex flex-col flex-1">
+                  <h3 className="font-semibold text-lg text-[#0F2654] mb-2">
                     {item.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mt-2">{item.desc}</p>
-                  <p className="mt-4 text-[#0F2654] text-sm font-medium cursor-pointer">
+                  <p className="text-sm text-gray-600 flex-1">{item.desc}</p>
+                  <p className="mt-4 text-[#0F2654] text-sm font-medium cursor-pointer hover:underline">
                     Learn More
                   </p>
                 </div>
@@ -94,12 +106,14 @@ export default function Home() {
           </div>
         </section>
 
-        {/* How It Works */}
+        {/* ───── HOW IT WORKS ───── */}
         <HowItWorksSection />
 
-        {/* Pricing & Testimonials */}
-        <PricingSection />
-        <TestimonialsSection />
+        {/* ───── PRICING & TESTIMONIALS ───── */}
+        <div className="px-4 sm:px-6 md:px-8">
+          <PricingSection />
+          <TestimonialsSection />
+        </div>
       </main>
 
       <Footer />
