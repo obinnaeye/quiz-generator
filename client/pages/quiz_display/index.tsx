@@ -28,7 +28,7 @@ const QuizDisplayPage: React.FC = () => {
     const fetchQuizQuestions = async () => {
       try {
         const { data } = await axios.post(
-          "http://localhost:8000/api/get-questions",
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/get-questions`,
           {
             question_type: questionType,
             num_questions: numQuestions,
@@ -63,7 +63,7 @@ const QuizDisplayPage: React.FC = () => {
         };
       });
       const { data: report } = await axios.post(
-        "http://localhost:8000/api/grade-answers",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/grade-answers`,
         payload,
       );
       const transformed = report.map((r: any) =>
