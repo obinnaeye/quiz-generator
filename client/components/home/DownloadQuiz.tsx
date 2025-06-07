@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { Observable } from 'rxjs';
-import { QueryPattern } from '../../constants/patterns';
-import { DownloadQuizProps } from '../../interfaces/props';
+import { useState } from "react";
+import axios from "axios";
+import { Observable } from "rxjs";
+import { QueryPattern } from "../../constants/patterns";
+import { DownloadQuizProps } from "../../interfaces/props";
 
-type FileFormat = 'txt' | 'csv' | 'pdf' | 'docx';
+type FileFormat = "txt" | "csv" | "pdf" | "docx";
 
-export default function DownloadQuiz ({userId, question_type, numQuestion}: DownloadQuizProps ) {
-  const [selectedFormat, setSelectedFormat] = useState<FileFormat>('txt');
+export default function DownloadQuiz({
+  userId,
+  question_type,
+  numQuestion,
+}: DownloadQuizProps) {
+  const [selectedFormat, setSelectedFormat] = useState<FileFormat>("txt");
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleFormatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -18,21 +22,24 @@ export default function DownloadQuiz ({userId, question_type, numQuestion}: Down
     setIsDownloading(true);
     const observable = new Observable((subscriber) => {
       axios
-        .get(`http://localhost:8000/download-quiz`, {
-          responseType: 'blob',
+        .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/download-quiz`, {
+          responseType: "blob",
           params: {
             pattern: QueryPattern.DownloadQuiz,
             user_id: userId,
             format: selectedFormat,
             type: question_type,
             num_question: numQuestion,
-          }
+          },
         })
         .then((response) => {
           const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
+          const link = document.createElement("a");
           link.href = url;
-          link.setAttribute('download', `${question_type}-quiz.${selectedFormat}`);
+          link.setAttribute(
+            "download",
+            `${question_type}-quiz.${selectedFormat}`,
+          );
           document.body.appendChild(link);
           link.click();
           link.remove();
@@ -40,7 +47,7 @@ export default function DownloadQuiz ({userId, question_type, numQuestion}: Down
           subscriber.complete();
         })
         .catch((error) => {
-          console.error('Download failed:', error);
+          console.error("Download failed:", error);
           subscriber.error(error);
         })
         .finally(() => {
@@ -49,18 +56,23 @@ export default function DownloadQuiz ({userId, question_type, numQuestion}: Down
     });
 
     observable.subscribe({
-      error: (error) => console.error('Observable error:', error),
+      error: (error) => console.error("Observable error:", error),
     });
   };
 
   return (
     <div className="flex flex-col items-center p-6 bg-gray-100 rounded-lg shadow-md max-w-md mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Download Your Quiz</h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">
+        Download Your Quiz
+      </h2>
       <p className="text-gray-600 mb-6 text-center">
         Select a file format to download the quiz.
       </p>
       <div className="mb-4 w-full">
-        <label htmlFor="format" className="block text-gray-700 font-medium mb-2">
+        <label
+          htmlFor="format"
+          className="block text-gray-700 font-medium mb-2"
+        >
           File Format
         </label>
         <select
@@ -80,12 +92,12 @@ export default function DownloadQuiz ({userId, question_type, numQuestion}: Down
         disabled={isDownloading}
         className={`w-full px-4 py-2 mt-4 text-white font-semibold rounded-md ${
           isDownloading
-            ? 'bg-gray-400 cursor-not-allowed'
-            : 'bg-indigo-600 hover:bg-indigo-700'
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-indigo-600 hover:bg-indigo-700"
         }`}
       >
-        {isDownloading ? 'Downloading...' : 'Download Quiz'}
+        {isDownloading ? "Downloading..." : "Download Quiz"}
       </button>
     </div>
   );
-};
+}
