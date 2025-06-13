@@ -11,6 +11,7 @@ from .api.v1.crud import download_quiz, generate_quiz, get_user_quiz_history
 from .app.db.routes import router as db_router
 from .app.db.core.connection import startUp
 from server.app.quiz.routers.quiz import router as quiz_router
+from .app.share.routes.share_routes import router as share_router
 from .schemas.model import UserModel, LoginRequestModel, LoginResponseModel
 from .schemas.query import (
     GenerateQuizQuery,
@@ -44,6 +45,7 @@ app.add_middleware(
 
 app.include_router(db_router)
 app.include_router(quiz_router, prefix="/api", tags=["quiz"])
+app.include_router(share_router, prefix="/share", tags=["share"])
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 
 mock_db: List[UserModel] = []

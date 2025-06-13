@@ -7,3 +7,5 @@ export * from "./sign-in-modal-props";
 export * from "./sign-up-modal-props";
 export * from "./quiz-display-page-props";
 export * from "./download-quiz-props";
+export * from "./share-display-props";
+export * from "./share-modal-props";
