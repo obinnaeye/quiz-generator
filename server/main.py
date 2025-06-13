@@ -1,10 +1,12 @@
 import logging
+import os
 from contextlib import asynccontextmanager
 from typing import Dict, Any, List
 
 from fastapi import FastAPI, Body, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from dotenv import load_dotenv
 
 from .api import healthcheck
 from .api.v1.crud import download_quiz, generate_quiz, get_user_quiz_history
@@ -31,12 +33,15 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     await startUp()
     yield
+load_dotenv()
+
+origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
 
 app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
