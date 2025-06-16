@@ -11,12 +11,13 @@ import {
   NavBar,
   Footer,
 } from "../../components/home";
+import { saveQuizToHistory } from "../../lib/functions/saveQuizToHistory";
 
 const QuizDisplayPage: React.FC = () => {
   const searchParams = useSearchParams();
   const questionType = searchParams.get("questionType") || "multichoice";
   const numQuestions = Number(searchParams.get("numQuestions")) || 1;
-  const userId = searchParams.get("userId") || "defaultUserId";
+  const userId = searchParams.get("userId") || "defaultUserId"; // ✅ (for now, until auth works)
 
   const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
   const [userAnswers, setUserAnswers] = useState<(string | number)[]>([]);
@@ -35,6 +36,9 @@ const QuizDisplayPage: React.FC = () => {
         );
         setQuizQuestions(data);
         setUserAnswers(Array(data.length).fill(""));
+
+        // ✅ Save to history after generating the quiz
+        await saveQuizToHistory(userId, questionType, data);
       } catch (error) {
         console.error("Error fetching quiz questions:", error);
       }

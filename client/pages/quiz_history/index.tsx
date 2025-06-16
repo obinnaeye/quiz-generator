@@ -1,57 +1,68 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
-import { getUserQuizHistory } from "../../lib/getUserQuizHistory";
+import { getUserQuizHistory } from "../../lib/functions/getUserQuizHistory";
 import { useSearchParams } from "next/navigation";
-import { GeneratedQuizModel } from "../../interfaces/models";
 import { DisplayQuizHistoryPageProps } from "../../interfaces/props";
 import NavBar from "../../components/home/NavBar";
 import Footer from "../../components/home/Footer";
 
 const determineQuizHistoryDisplay = async (userId: string) => {
-  const quizHistory: GeneratedQuizModel[][] | undefined =
-    await getUserQuizHistory(userId);
-  if (quizHistory != undefined) {
-    const rearrangedHistory = quizHistory.map((quiz, quizIndex) => {
-      const quizNumber = quizIndex + 1;
+  const quizHistory = await getUserQuizHistory(userId);
 
-      const listedQuizQuestions = quiz.map((quizQuestion, qIndex) => {
-        let optionsList: JSX.Element | null = null;
-        if (quizQuestion.options) {
-          optionsList = (
-            <ul className="ml-4 list-disc list-inside text-sm text-gray-700">
-              {quizQuestion.options.map((option, optIdx) => (
-                <li key={optIdx} className="py-0.5">
-                  {option}
-                </li>
-              ))}
-            </ul>
-          );
-        }
+  if (quizHistory && quizHistory.length > 0) {
+    const rearrangedHistory = quizHistory.map(
+      (quizItem: any, quizIndex: number) => {
+        const quizNumber = quizIndex + 1;
+        const createdAt = quizItem.created_at
+          ? new Date(quizItem.created_at).toLocaleString()
+          : "Unknown date";
+
+        const listedQuizQuestions = quizItem.questions.map(
+          (quizQuestion: any, qIndex: number) => {
+            let optionsList: JSX.Element | null = null;
+            if (quizQuestion.options) {
+              optionsList = (
+                <ul className="ml-4 list-disc list-inside text-sm text-gray-700">
+                  {quizQuestion.options.map(
+                    (option: string, optIdx: number) => (
+                      <li key={optIdx} className="py-0.5">
+                        {option}
+                      </li>
+                    ),
+                  )}
+                </ul>
+              );
+            }
+
+            return (
+              <div key={qIndex} className="mb-4">
+                <h3 className="font-semibold text-gray-800 text-base sm:text-lg mb-1">
+                  {qIndex + 1}. {quizQuestion.question}
+                </h3>
+                {optionsList}
+                <p className="mt-1 text-sm text-[#0F2654]">
+                  <strong>Answer:</strong> {quizQuestion.answer}
+                </p>
+              </div>
+            );
+          },
+        );
 
         return (
-          <div key={qIndex} className="mb-4">
-            <h3 className="font-semibold text-gray-800 text-base sm:text-lg mb-1">
-              {qIndex + 1}. {quizQuestion.question}
-            </h3>
-            {optionsList}
-            <p className="mt-1 text-sm text-[#0F2654]">
-              <strong>Answer:</strong> {quizQuestion.answer}
+          <div key={quizIndex}>
+            <hr className="border-gray-300 my-4" />
+            <h2 className="text-lg sm:text-xl font-bold text-[#0F2654] mb-1">
+              Quiz #{quizNumber}
+            </h2>
+            <p className="text-sm text-gray-500 mb-3">
+              Generated on: {createdAt}
             </p>
+            <div>{listedQuizQuestions}</div>
           </div>
         );
-      });
-
-      return (
-        <div key={quizIndex}>
-          <hr className="border-gray-300 my-4" />
-          <h2 className="text-lg sm:text-xl font-bold text-[#0F2654] mb-3">
-            Quiz #{quizNumber}
-          </h2>
-          <div>{listedQuizQuestions}</div>
-        </div>
-      );
-    });
+      },
+    );
 
     return rearrangedHistory;
   } else {
@@ -99,7 +110,7 @@ export default function DisplayQuizHistory() {
   const [quizHistory, setQuizHistory] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
-    const userId = searchParams.get("userId") || "fakeId";
+    const userId = searchParams.get("userId") || "userId";
 
     const fetchQuizHistory = async () => {
       try {

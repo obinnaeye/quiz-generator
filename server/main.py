@@ -9,8 +9,10 @@ from fastapi.responses import StreamingResponse
 from .api import healthcheck
 from .api.v1.crud import download_quiz, generate_quiz, get_user_quiz_history
 from .app.db.routes import router as db_router
+from .app.db.routes.save_quiz_history import router as save_quiz_router
+from .app.db.routes.get_quiz_history import router as get_quiz_history_router
 from .app.db.core.connection import startUp
-from server.app.quiz.routers.quiz import router as quiz_router
+from .app.quiz.routers.quiz import router as quiz_router
 from .schemas.model import UserModel, LoginRequestModel, LoginResponseModel
 from .schemas.query import (
     GenerateQuizQuery,
@@ -94,3 +96,6 @@ def get_user_quiz_history_handler(query: GetUserQuizHistoryQuery = Body(...)) ->
 async def download_quiz_handler(query: DownloadQuizQuery = Depends()) -> StreamingResponse:
     logger.info("Received query: %s", query)
     return download_quiz(query.format, query.question_type, query.num_question)
+
+app.include_router(save_quiz_router, prefix="/api")
+app.include_router(get_quiz_history_router, prefix="/api")
