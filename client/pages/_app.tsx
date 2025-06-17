@@ -1,6 +1,7 @@
 // pages/_app.tsx
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import "../components/ui/global.css";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
@@ -15,5 +16,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     }
   }, []);
 
-  return <Component {...pageProps} />;
+  return (
+    <>
+      <Component {...pageProps} />
+      <Toaster position="top-right" />
+    </>
+  );
 }

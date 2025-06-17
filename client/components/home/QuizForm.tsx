@@ -14,6 +14,7 @@ export default function QuizForm() {
   const [questionType, setQuestionType] = useState("multichoice");
   const [difficultyLevel, setDifficultyLevel] = useState("easy");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleGenerateQuiz = async () => {
@@ -24,7 +25,9 @@ export default function QuizForm() {
       return;
     }
 
+    setLoading(true);
     setErrorMessage("");
+
     try {
       const { data } = await axios.post(
         "http://localhost:8000/api/get-questions",
@@ -38,8 +41,6 @@ export default function QuizForm() {
         },
       );
 
-      console.log("Quiz data:", data);
-
       const userId = "userId";
       const queryParams = new URLSearchParams({
         userId,
@@ -52,6 +53,8 @@ export default function QuizForm() {
     } catch (error) {
       console.error(error);
       setErrorMessage("Failed to generate quiz. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,7 +76,7 @@ export default function QuizForm() {
           setDifficultyLevel={setDifficultyLevel}
         />
         {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
-        <GenerateButton onClick={handleGenerateQuiz} />
+        <GenerateButton onClick={handleGenerateQuiz} loading={loading} />
       </form>
     </div>
   );
