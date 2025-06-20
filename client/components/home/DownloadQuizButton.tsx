@@ -26,7 +26,7 @@ export default function DownloadQuizButton({
     setIsDownloading(true);
     const observable = new Observable<void>((subscriber) => {
       axios
-        .get(`http://localhost:8000/download-quiz`, {
+        .get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/download-quiz`, {
           responseType: "blob",
           params: {
             pattern: QueryPattern.DownloadQuiz,
