@@ -6,7 +6,6 @@ import os
 from pathlib import Path
 
 
-# Now this will pull the correct value
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 
 
