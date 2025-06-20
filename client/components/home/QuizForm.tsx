@@ -30,7 +30,7 @@ export default function QuizForm() {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:8000/api/get-questions",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/get-questions`,
         {
           profession,
           audience_type: audienceType,
