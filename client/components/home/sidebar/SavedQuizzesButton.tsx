@@ -1,14 +1,18 @@
+"use client";
+
 import React from "react";
 import SidebarButton from "./SidebarButton";
-import { showComingSoonToast } from "../../ui/ComingSoonToast";
+import { useRouter } from "next/navigation";
 
 const SavedQuizzesButton = () => {
+  const router = useRouter();
+
+  const handleNavigation = () => {
+    router.push("/saved_quizzes");
+  };
+
   return (
-    <SidebarButton
-      label="Saved Quizzes"
-      icon="💾"
-      onClick={showComingSoonToast}
-    />
+    <SidebarButton label="Saved Quizzes" icon="💾" onClick={handleNavigation} />
   );
 };
 

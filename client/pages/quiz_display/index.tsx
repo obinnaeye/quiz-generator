@@ -12,17 +12,22 @@ import {
   Footer,
 } from "../../components/home";
 import { saveQuizToHistory } from "../../lib/functions/saveQuizToHistory";
+import { saveQuiz } from "../../lib/functions/saveQuiz";
 
 const QuizDisplayPage: React.FC = () => {
   const searchParams = useSearchParams();
   const questionType = searchParams.get("questionType") || "multichoice";
   const numQuestions = Number(searchParams.get("numQuestions")) || 1;
-  const userId = searchParams.get("userId") || "defaultUserId"; // ✅ (for now, until auth works)
+  const userId = searchParams.get("userId") || "defaultUserId";
 
   const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
   const [userAnswers, setUserAnswers] = useState<(string | number)[]>([]);
   const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
   const [quizReport, setQuizReport] = useState<any[]>([]);
+  const [quizName, setQuizName] = useState<string>("");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveMessage, setSaveMessage] = useState<string>("");
+  const [showSaveInput, setShowSaveInput] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchQuizQuestions = async () => {
@@ -36,8 +41,6 @@ const QuizDisplayPage: React.FC = () => {
         );
         setQuizQuestions(data);
         setUserAnswers(Array(data.length).fill(""));
-
-        // ✅ Save to history after generating the quiz
         await saveQuizToHistory(userId, questionType, data);
       } catch (error) {
         console.error("Error fetching quiz questions:", error);
@@ -85,13 +88,30 @@ const QuizDisplayPage: React.FC = () => {
     }
   };
 
+  const handleSaveQuiz = async () => {
+    if (!quizName.trim()) {
+      setSaveMessage("Please enter a quiz name.");
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await saveQuiz(userId, quizName, questionType, quizQuestions);
+      setSaveMessage("Quiz saved successfully.");
+      setQuizName("");
+      setShowSaveInput(false);
+    } catch (err) {
+      setSaveMessage("Failed to save quiz.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <NavBar />
 
       <main className="flex-1 flex justify-center px-4 sm:px-6 md:px-8 py-8">
         <div className="w-full max-w-4xl space-y-10">
-          {/* Quiz Questions Card */}
           <section className="bg-white shadow rounded-xl px-4 sm:px-6 py-6 sm:py-8 border border-gray-200">
             <h1 className="text-xl sm:text-2xl font-bold text-[#0F2654] mb-6">
               {`${questionType.charAt(0).toUpperCase() + questionType.slice(1)} Quiz`}
@@ -127,7 +147,6 @@ const QuizDisplayPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Quiz Results Card */}
           {isQuizChecked && (
             <section className="bg-white shadow rounded-xl px-4 sm:px-6 py-6 sm:py-8 border border-gray-200">
               <h2 className="text-xl sm:text-2xl font-bold text-[#0F2654] mb-4">
@@ -167,9 +186,34 @@ const QuizDisplayPage: React.FC = () => {
               </div>
 
               <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
-                <button className="bg-[#0a3264] hover:bg-[#082952] text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-sm">
-                  Upgrade Plan to Save your Quiz
-                </button>
+                {showSaveInput ? (
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-3 space-y-2 sm:space-y-0 w-full">
+                    <input
+                      type="text"
+                      placeholder="Enter quiz name"
+                      value={quizName}
+                      onChange={(e) => setQuizName(e.target.value)}
+                      className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm"
+                    />
+                    <button
+                      onClick={handleSaveQuiz}
+                      disabled={isSaving}
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-md"
+                    >
+                      {isSaving ? "Saving..." : "Save Quiz"}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowSaveInput(true)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-md"
+                  >
+                    Save Quiz
+                  </button>
+                )}
+                {saveMessage && (
+                  <p className="text-sm text-gray-600 mt-2">{saveMessage}</p>
+                )}
                 <NewQuizButton />
               </div>
             </section>
