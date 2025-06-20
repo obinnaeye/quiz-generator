@@ -1,4 +1,3 @@
-// client/pages/quiz_display/index.tsx
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
@@ -12,12 +11,13 @@ import {
   NavBar,
   Footer,
 } from "../../components/home";
+import { saveQuizToHistory } from "../../lib/functions/saveQuizToHistory";
 
 const QuizDisplayPage: React.FC = () => {
   const searchParams = useSearchParams();
   const questionType = searchParams.get("questionType") || "multichoice";
   const numQuestions = Number(searchParams.get("numQuestions")) || 1;
-  const userId = searchParams.get("userId") || "defaultUserId";
+  const userId = searchParams.get("userId") || "defaultUserId"; // ✅ (for now, until auth works)
 
   const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
   const [userAnswers, setUserAnswers] = useState<(string | number)[]>([]);
@@ -36,6 +36,9 @@ const QuizDisplayPage: React.FC = () => {
         );
         setQuizQuestions(data);
         setUserAnswers(Array(data.length).fill(""));
+
+        // ✅ Save to history after generating the quiz
+        await saveQuizToHistory(userId, questionType, data);
       } catch (error) {
         console.error("Error fetching quiz questions:", error);
       }
@@ -86,23 +89,21 @@ const QuizDisplayPage: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-gray-100">
       <NavBar />
 
-      <main className="flex-1 flex justify-center px-4 py-8">
-        {/* Centered Quiz Card */}
-        <div className="w-full max-w-3xl space-y-8">
+      <main className="flex-1 flex justify-center px-4 sm:px-6 md:px-8 py-8">
+        <div className="w-full max-w-4xl space-y-10">
           {/* Quiz Questions Card */}
-          <section className="bg-white shadow rounded-xl px-6 py-8 border border-gray-200">
-            <h1 className="text-2xl font-bold text-[#0F2654] mb-6">
+          <section className="bg-white shadow rounded-xl px-4 sm:px-6 py-6 sm:py-8 border border-gray-200">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#0F2654] mb-6">
               {`${questionType.charAt(0).toUpperCase() + questionType.slice(1)} Quiz`}
             </h1>
 
-            {/* Questions */}
             <div className="space-y-6">
               {quizQuestions.map((q, i) => (
                 <div
                   key={i}
                   className="bg-gray-50 p-4 rounded-md border border-gray-200"
                 >
-                  <h3 className="font-semibold text-gray-800 mb-2">
+                  <h3 className="font-medium text-gray-800 mb-2 text-sm sm:text-base">
                     {i + 1}. {q.question}
                   </h3>
                   <QuizAnswerField
@@ -115,8 +116,7 @@ const QuizDisplayPage: React.FC = () => {
               ))}
             </div>
 
-            {/* Actions */}
-            <div className="mt-6 flex space-x-4">
+            <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
               <CheckButton onClick={checkAnswers} />
               <DownloadQuizButton
                 userId={userId}
@@ -129,15 +129,16 @@ const QuizDisplayPage: React.FC = () => {
 
           {/* Quiz Results Card */}
           {isQuizChecked && (
-            <section className="bg-white shadow rounded-xl px-6 py-8 border border-gray-200">
-              <h2 className="text-2xl font-bold text-[#0F2654] mb-4">
+            <section className="bg-white shadow rounded-xl px-4 sm:px-6 py-6 sm:py-8 border border-gray-200">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#0F2654] mb-4">
                 My Quiz Result
               </h2>
+
               <div className="space-y-4">
                 {quizReport.map((r, i) => (
                   <div
                     key={i}
-                    className={`p-4 rounded-md border ${
+                    className={`p-4 rounded-md border text-sm ${
                       r.is_correct
                         ? "border-green-200 bg-green-50"
                         : "border-red-200 bg-red-50"
@@ -165,8 +166,7 @@ const QuizDisplayPage: React.FC = () => {
                 ))}
               </div>
 
-              {/* Upgrade & New Quiz */}
-              <div className="mt-6 flex space-x-4">
+              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
                 <button className="bg-[#0a3264] hover:bg-[#082952] text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-sm">
                   Upgrade Plan to Save your Quiz
                 </button>

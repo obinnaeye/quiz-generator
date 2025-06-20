@@ -1,7 +1,12 @@
+from dotenv import load_dotenv
+load_dotenv()   
+
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 import os
+from pathlib import Path
 
 
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 
@@ -11,6 +16,7 @@ database = client["quizApp_db"]
 
 quizzes_collection = database["quizzes"]
 users_collection = database["users"]
+quiz_history_collection = database["quiz_history"]
 
 async def ensure_user_indexes(users_collection: AsyncIOMotorCollection):
     await users_collection.create_index("email", unique=True) 
