@@ -14,7 +14,7 @@ from ..schemas.user_schemas import (
     UserSchema, 
     DeleteUserResponse, 
     UpdateUserSchema, 
-    LoginRequest, 
+    LoginRequestModel, 
     LoginResponse
 )
 from ..utils import is_valid_password
@@ -61,7 +61,7 @@ async def delete_existing_user(user_id: str):
     return result
 
 @router.post("/test/login/", response_model=LoginResponse)
-async def login_user(request: LoginRequest):
+async def login_user(request: LoginRequestModel):
     if not request.username and not request.email:
         raise HTTPException(status_code=400, detail="Username or email is required")
 

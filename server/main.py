@@ -43,8 +43,28 @@ import jwt
 from datetime import datetime, timedelta
 from .app.db.routes import router as db_router
 from .app.auth.routes import router as auth_router  
+from .app.db.core.connection import database, users_collection, quizzes_collection
+from .app.db.core.redis import get_redis_client
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await startUp()
+    redis_client = get_redis_client()
+
+    # Stockage dans app.state
+    app.state.database = database
+    app.state.users_collection = users_collection
+    app.state.quizzes_collection = quizzes_collection
+    app.state.redis = redis_client
+
+    yield
+
+    # Shutdown (optionnel)
+    redis_client.close()
 
 app = FastAPI(lifespan=lifespan)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -59,7 +79,9 @@ app.include_router(quiz_router, prefix="/api", tags=["quiz"])
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
 app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 
-mock_db: List[UserModel] = []
+app.database = database
+
+#mock_db: List[UserModel] = []
 
 @app.get("/api")
 def read_root():
