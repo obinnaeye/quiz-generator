@@ -1,21 +1,21 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import SignUpModal from "../(dashboard)/user/SignUpModal";
 
-export default function SignUpButton() {
-  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
-
-  const openSignUpModal = () => setIsSignUpModalOpen(true);
-  const closeSignUpModal = () => setIsSignUpModalOpen(false);
+const SignUpButton: React.FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <>
       <button
-        onClick={openSignUpModal}
-        className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        type="button"
+        onClick={() => setIsOpen(true)}
+        className="text-base font-semibold text-white bg-[#0F2654] rounded-2xl px-6 py-2 hover:bg-[#0c2145] transition"
       >
         Sign Up
       </button>
-      <SignUpModal isOpen={isSignUpModalOpen} onClose={closeSignUpModal} />
+      <SignUpModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
-}
+};
+
+export default SignUpButton;

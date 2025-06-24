@@ -1,11 +1,14 @@
 from fastapi.responses import StreamingResponse
 from .api import healthcheck
 import logging
+import os
 from contextlib import asynccontextmanager
 from typing import Dict, Any, List
 from fastapi import FastAPI, Body, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from dotenv import load_dotenv
+
 from .api import healthcheck
 from .api.v1.crud import download_quiz, generate_quiz, get_user_quiz_history
 from .app.db.routes import router as db_router
@@ -31,44 +34,16 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     await startUp()
     yield
-from pydantic import BaseModel
-from redis import Redis
-import random
-import os
-from dotenv import load_dotenv
-from server.celery_config import celery
-from server.tasks import send_otp_task, send_password_reset_email
-from server.email_utils import send_otp_email
-import jwt
-from datetime import datetime, timedelta
-from .app.db.routes import router as db_router
-from .app.auth.routes import router as auth_router  
-from .app.db.core.connection import database, users_collection, quizzes_collection
-from .app.db.core.redis import get_redis_client
+load_dotenv()
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    await startUp()
-    redis_client = get_redis_client()
-
-    # Stockage dans app.state
-    app.state.database = database
-    app.state.users_collection = users_collection
-    app.state.quizzes_collection = quizzes_collection
-    app.state.redis = redis_client
-
-    yield
-
-    # Shutdown (optionnel)
-    redis_client.close()
+origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
 
 app = FastAPI(lifespan=lifespan)
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -4,51 +4,43 @@ import { useState } from "react";
 import GenerateButton from "./GenerateButton";
 import QuizGenerationSection from "./QuizGenerationSection";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function QuizForm() {
   const [profession, setProfession] = useState("");
+  const [audienceType, setAudienceType] = useState("");
+  const [customInstruction, setCustomInstruction] = useState("");
   const [numQuestions, setNumQuestions] = useState(1);
   const [questionType, setQuestionType] = useState("multichoice");
   const [difficultyLevel, setDifficultyLevel] = useState("easy");
-  const [errorMessage, setErrorMessage] = useState(""); // For displaying validation error
+  const [errorMessage, setErrorMessage] = useState("");
   const router = useRouter();
 
   const handleGenerateQuiz = async () => {
-    // Check if all required fields are filled out
     if (!profession || !numQuestions || !questionType) {
       setErrorMessage(
-        "Please fill in the topic, select number of questions, and choose a quiz type."
+        "Please fill in the topic, number of questions, and quiz type.",
       );
       return;
     }
 
-    console.log({ profession, numQuestions, questionType, difficultyLevel });
     setErrorMessage("");
-
     try {
-      // Replace 'http://localhost:8000' with your FastAPI backend URL
-      const response = await fetch("http://localhost:8000/api/get-questions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/get-questions`,
+        {
           profession,
+          audience_type: audienceType,
+          custom_instruction: customInstruction,
           num_questions: numQuestions,
           question_type: questionType,
           difficulty_level: difficultyLevel,
-        }),
-      });
+        },
+      );
 
-      if (!response.ok) {
-        throw new Error("Failed to generate quiz");
-      }
-
-      const data = await response.json();
       console.log("Quiz data:", data);
 
-      // Redirect to quiz display page with received data
-      const userId = "userId"; // userId should be populated when a user logs in or something like that
+      const userId = "userId";
       const queryParams = new URLSearchParams({
         userId,
         questionType,
@@ -58,25 +50,31 @@ export default function QuizForm() {
 
       router.push(`/quiz_display?${queryParams}`);
     } catch (error) {
-      console.error("Error:", error);
+      console.error(error);
       setErrorMessage("Failed to generate quiz. Please try again.");
     }
   };
 
   return (
-    <form onSubmit={(e) => e.preventDefault()}>
-      <QuizGenerationSection
-        profession={profession}
-        setProfession={setProfession}
-        questionType={questionType}
-        setQuestionType={setQuestionType}
-        numQuestions={numQuestions}
-        setNumQuestions={setNumQuestions}
-        difficultyLevel={difficultyLevel}
-        setDifficultyLevel={setDifficultyLevel}
-      />
-      {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
-      <GenerateButton onClick={handleGenerateQuiz} />
-    </form>
+    <div className="max-w-3xl mx-auto bg-[#f7f8fa] rounded-xl p-10 shadow-lg">
+      <form onSubmit={(e) => e.preventDefault()}>
+        <QuizGenerationSection
+          profession={profession}
+          setProfession={setProfession}
+          audienceType={audienceType}
+          setAudienceType={setAudienceType}
+          customInstruction={customInstruction}
+          setCustomInstruction={setCustomInstruction}
+          numQuestions={numQuestions}
+          setNumQuestions={setNumQuestions}
+          questionType={questionType}
+          setQuestionType={setQuestionType}
+          difficultyLevel={difficultyLevel}
+          setDifficultyLevel={setDifficultyLevel}
+        />
+        {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
+        <GenerateButton onClick={handleGenerateQuiz} />
+      </form>
+    </div>
   );
 }

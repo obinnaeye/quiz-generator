@@ -16,6 +16,8 @@ docx = "*"
 redis = "*"
 celery = "*"
 pyjwt = "*"
+testcontainers = "*"
+pypdf = "*"
 
 [dev-packages]
 pytest = "*"

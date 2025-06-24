@@ -1,10 +1,20 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface QuizGenerationSectionProps {
-    profession: string;
-    setProfession: (value: string) => void;
-    numQuestions: number;
-    setNumQuestions: (value: number) => void;
-    questionType: string;
-    setQuestionType: (value: string) => void;
-    difficultyLevel: string;
-    setDifficultyLevel: (value: string) => void;
+  profession: string;
+  setProfession: Dispatch<SetStateAction<string>>;
+  audienceType: string;
+  setAudienceType: Dispatch<SetStateAction<string>>;
+  customInstruction: string;
+  setCustomInstruction: Dispatch<SetStateAction<string>>;
+  numQuestions: number;
+  setNumQuestions: Dispatch<SetStateAction<number>>;
+  questionType: string;
+  setQuestionType: Dispatch<SetStateAction<string>>;
+  difficultyLevel: string;
+  setDifficultyLevel: Dispatch<SetStateAction<string>>;
 }
+
+// export interface GenerateButtonProps {
+//   onClick: () => void;
+// }
