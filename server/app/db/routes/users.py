@@ -15,7 +15,7 @@ from ..schemas.user_schemas import (
     UserSchema, 
     DeleteUserResponse, 
     UpdateUserSchema, 
-    LoginRequest, 
+    LoginRequestModel, 
     LoginResponse
 )
 from ..utils import is_valid_password

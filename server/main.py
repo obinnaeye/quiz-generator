@@ -1,9 +1,10 @@
+from fastapi.responses import StreamingResponse
+from .api import healthcheck
 import logging
 import os
 from contextlib import asynccontextmanager
 from typing import Dict, Any, List
-
-from fastapi import FastAPI, Body, HTTPException, Depends
+from fastapi import FastAPI, Body, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
@@ -39,6 +40,7 @@ origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
 
 app = FastAPI(lifespan=lifespan)
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -50,40 +52,22 @@ app.add_middleware(
 app.include_router(db_router)
 app.include_router(quiz_router, prefix="/api", tags=["quiz"])
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
+app.include_router(auth_router, prefix="/auth", tags=["authentication"])
 
-mock_db: List[UserModel] = []
+app.database = database
+
+#mock_db: List[UserModel] = []
 
 @app.get("/api")
 def read_root():
     logger.info("Root endpoint accessed")
     return {"message": "Welcome to the Quiz App API!"}
 
-@app.post("/register/", response_model=UserModel)
-def create_user(user: UserModel):
-    if any(existing_user.username == user.username for existing_user in mock_db):
-        raise HTTPException(status_code=400, detail="Username already taken")
-    if any(existing_user.email == user.email for existing_user in mock_db):
-        raise HTTPException(status_code=400, detail="Email already registered")
-    mock_db.append(user)
-    return user
+load_dotenv()  
 
 @app.get("/users/", response_model=List[UserModel])
 def list_users():
     return mock_db
-
-@app.post("/login/", response_model=LoginResponseModel)
-def login(request: LoginRequestModel):
-    user = next(
-        (
-            u for u in mock_db 
-            if (u.username == request.username_or_email or u.email == request.username_or_email)
-            and u.password == request.password
-        ),
-        None
-    )
-    if user is None:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"message": "Login successful", "user": user}
 
 @app.post("/generate-quiz")
 async def generate_quiz_handler(query: GenerateQuizQuery = Body(...)) -> Dict[str, Any]:
