@@ -2,19 +2,17 @@
 "use client";
 
 import React from "react";
-import { useRouter } from "next/router"; // Pages Router
+import { useRouter } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 
-const GenerateQuizButton: React.FC = () => {
+const GenerateQuizButton = () => {
   const router = useRouter();
 
-  return (
-    <SidebarButton
-      label="Generate Quiz"
-      icon="🧠"
-      onClick={() => router.push("/generate")}
-    />
-  );
+  const handleClick = () => {
+    router.push("/generate");
+  };
+
+  return <SidebarButton label="Generate Quiz" icon="🧠" onClick={handleClick} />;
 };
 
 export default GenerateQuizButton;

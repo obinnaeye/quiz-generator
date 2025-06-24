@@ -29,3 +29,5 @@ def get_users_collection() -> AsyncIOMotorCollection:
 def get_quizzes_collection() -> AsyncIOMotorCollection:
     return quizzes_collection
 
+def get_folders_collection() -> AsyncIOMotorCollection:
+    return database["folders"]

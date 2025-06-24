@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import {
@@ -11,6 +11,10 @@ import {
   NavBar,
   Footer,
 } from "../../components/home";
+import { quizService } from "@/lib/services/quizService";
+import { Button } from "@/components/ui/button";
+import { Folder } from "@/interfaces/models/folder";
+import { folderService } from "@/lib/services/folderService";
 
 const QuizDisplayPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -22,6 +26,9 @@ const QuizDisplayPage: React.FC = () => {
   const [userAnswers, setUserAnswers] = useState<(string | number)[]>([]);
   const [isQuizChecked, setIsQuizChecked] = useState<boolean>(false);
   const [quizReport, setQuizReport] = useState<any[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<string>("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const fetchQuizQuestions = async () => {
@@ -35,12 +42,26 @@ const QuizDisplayPage: React.FC = () => {
         );
         setQuizQuestions(data);
         setUserAnswers(Array(data.length).fill(""));
+        // Automatically save the quiz
+        await quizService.saveQuiz(userId, data);
       } catch (error) {
         console.error("Error fetching quiz questions:", error);
       }
     };
     fetchQuizQuestions();
-  }, [questionType, numQuestions]);
+  }, [questionType, numQuestions, userId]);
+
+  useEffect(() => {
+    const loadFolders = async () => {
+      try {
+        const userFolders = await folderService.getUserFolders(userId);
+        setFolders(userFolders);
+      } catch (error) {
+        console.error("Failed to load folders:", error);
+      }
+    };
+    loadFolders();
+  }, [userId]);
 
   const handleAnswerChange = (index: number, answer: string | number) => {
     const updated = [...userAnswers];
@@ -78,6 +99,27 @@ const QuizDisplayPage: React.FC = () => {
       setIsQuizChecked(true);
     } catch (err) {
       console.error("Error checking answers:", err);
+    }
+  };
+
+  const handleSaveToFolder = async () => {
+    if (!selectedFolder) return;
+    
+    setIsSaving(true);
+    try {
+      // Get the quiz ID from the saved quiz
+      const savedQuizzes = await quizService.getSavedQuizzes(userId);
+      const latestQuiz = savedQuizzes[savedQuizzes.length - 1];
+      
+      // Add the quiz to the selected folder
+      await folderService.addQuizToFolder(selectedFolder, latestQuiz[0].id);
+      
+      alert("Quiz saved to folder successfully!");
+    } catch (error) {
+      console.error("Failed to save quiz to folder:", error);
+      alert("Failed to save quiz to folder");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -155,18 +197,36 @@ const QuizDisplayPage: React.FC = () => {
                         {parseFloat(r.accuracy_percentage).toFixed(2)}%
                       </p>
                     )}
-                    <p>
-                      <strong>Result:</strong> {r.result}
-                    </p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-4 sm:space-y-0">
-                <button className="bg-[#0a3264] hover:bg-[#082952] text-white font-semibold px-4 py-2 rounded-xl shadow-md transition text-sm">
-                  Upgrade Plan to Save your Quiz
-                </button>
-                <NewQuizButton />
+              {/* Save to Folder Section */}
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                  Save to Folder
+                </h3>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <select
+                    className="flex-1 p-2 border border-gray-300 rounded-md"
+                    value={selectedFolder}
+                    onChange={(e) => setSelectedFolder(e.target.value)}
+                  >
+                    <option value="">Select a folder</option>
+                    {folders.map((folder) => (
+                      <option key={folder.id} value={folder.id}>
+                        {folder.name}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    onClick={handleSaveToFolder}
+                    disabled={!selectedFolder || isSaving}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
+                  >
+                    {isSaving ? "Saving..." : "Save to Folder"}
+                  </Button>
+                </div>
               </div>
             </section>
           )}
@@ -178,10 +238,4 @@ const QuizDisplayPage: React.FC = () => {
   );
 };
 
-export default function DisplayQuiz() {
-  return (
-    <Suspense fallback={<div>Loading quiz...</div>}>
-      <QuizDisplayPage />
-    </Suspense>
-  );
-}
+export default QuizDisplayPage;
