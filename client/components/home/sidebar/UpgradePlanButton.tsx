@@ -1,9 +1,17 @@
-// components/sidebar/UpgradePlanButton.tsx
+"use client";
+
 import React from "react";
+import { useRouter } from "next/navigation";
 import SidebarButton from "./SidebarButton";
 
 const UpgradePlanButton = () => {
-  return <SidebarButton label="Upgrade Plan" icon="🚀" />;
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push("/#pricing");
+  };
+
+  return <SidebarButton label="Upgrade Plan" icon="🚀" onClick={handleClick} />;
 };
 
 export default UpgradePlanButton;

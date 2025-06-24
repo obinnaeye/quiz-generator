@@ -13,12 +13,14 @@ from .api.v1.crud import download_quiz, generate_quiz, get_user_quiz_history
 from .app.db.routes import router as db_router
 from .app.db.core.connection import startUp
 from server.app.quiz.routers.quiz import router as quiz_router
+from .app.db.routes.folders_routes import router as folder_router
 from .schemas.model import UserModel, LoginRequestModel, LoginResponseModel
 from .schemas.query import (
     GenerateQuizQuery,
     DownloadQuizQuery,
     GetUserQuizHistoryQuery
 )
+from server.app.db.routes import router as api_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -50,6 +52,8 @@ app.add_middleware(
 app.include_router(db_router)
 app.include_router(quiz_router, prefix="/api", tags=["quiz"])
 app.include_router(healthcheck.router, prefix="/api", tags=["healthcheck"])
+app.include_router(api_router, prefix="/api")
+app.include_router(folder_router, prefix="/api", tags=["folders"])
 
 mock_db: List[UserModel] = []
 

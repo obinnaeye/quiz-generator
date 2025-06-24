@@ -1,5 +1,10 @@
 export interface GeneratedQuizModel {
-    question: string,
-    options?: string[],
-    answer: string | number
+    id?: string;
+    question: string;
+    question_type: string;
+    options?: string[];
+    correct_answer: string;
+    user_id?: string;
+    created_at?: string;
+    updated_at?: string;
 }
