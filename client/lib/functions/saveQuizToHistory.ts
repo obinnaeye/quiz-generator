@@ -7,7 +7,7 @@ export const saveQuizToHistory = async (
   questions: GeneratedQuizModel[],
 ) => {
   try {
-    await axios.post("http://localhost:8000/api/save-quiz", {
+    await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/save-quiz`, {
       user_id: userId,
       question_type: questionType,
       questions,
