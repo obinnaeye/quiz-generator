@@ -1,12 +1,17 @@
+// components/sidebar/PricingLink.tsx
+"use client";
+
 import React from "react";
+import Link from "next/link";
 
 const PricingLink: React.FC = () => (
-  <a
-    href="#pricing"
+  <Link
+    href="/#pricing"
+    scroll={true}
     className="text-base font-semibold text-black hover:opacity-80 transition"
   >
     Pricing
-  </a>
+  </Link>
 );
 
 export default PricingLink;
