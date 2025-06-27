@@ -52,9 +52,6 @@ const determineQuizHistoryDisplay = async (userId: string) => {
         return (
           <div key={quizIndex}>
             <hr className="border-gray-300 my-4" />
-            <h2 className="text-lg sm:text-xl font-bold text-[#0F2654] mb-1">
-              Quiz #{quizNumber}
-            </h2>
             <p className="text-sm text-gray-500 mb-3">
               Generated on: {createdAt}
             </p>
