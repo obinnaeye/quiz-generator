@@ -8,7 +8,7 @@ export default function NewQuizButton() {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/");
+    router.push("/generate");
   };
 
   return (
