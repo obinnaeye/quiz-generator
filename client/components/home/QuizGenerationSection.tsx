@@ -1,4 +1,5 @@
 import { QuizGenerationSectionProps } from "../../interfaces/props";
+import RequiredLabel from "./common/RequiredLabel";
 
 const QUESTION_TYPES = [
   { label: "Multiple Choice", value: "multichoice" },
@@ -33,9 +34,10 @@ export default function QuizGenerationSection({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Quiz Topic */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-[#2C3E50] mb-1">
-            Enter The Concept/Context For This Quiz
-          </label>
+          <RequiredLabel
+            text="Enter The Concept/Context For This Quiz"
+            required
+          />
           <input
             type="text"
             value={profession}
@@ -97,9 +99,7 @@ export default function QuizGenerationSection({
         <div className="space-y-4">
           {/* Question Types */}
           <div>
-            <label className="block text-sm font-semibold text-[#2C3E50] mb-1">
-              Question type(s)
-            </label>
+            <RequiredLabel text="Question type(s)" required />
             <div className="space-y-2">
               {QUESTION_TYPES.map((type) => (
                 <label
@@ -125,9 +125,7 @@ export default function QuizGenerationSection({
 
           {/* Number of Questions */}
           <div>
-            <label className="block text-sm font-semibold text-[#2C3E50] mb-1">
-              Number of questions
-            </label>
+            <RequiredLabel text="Number of questions" required />
             <input
               type="number"
               value={numQuestions}
