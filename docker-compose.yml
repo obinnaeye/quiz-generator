@@ -1,34 +1,44 @@
-services:  
+
+version: '3.8'
+
+services:
   client:
     build:
       context: .
       target: frontend-service
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     volumes:
       - ./client:/client
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
     command: ["pnpm", "run", "dev"]
-  
+    depends_on:
+      - server
+
   server:
     build:
-      context: . 
-      target: backend-service 
+      context: .
+      target: backend-service
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
       - ./server:/server
     environment:
-      - MONGO_URI=${MONGO_URI} 
+      - MONGO_URI=${MONGO_URI}
       - PYTHONPATH=/
+      - ALLOWED_ORIGINS=http://localhost:3000
     command: ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "${BACKEND_PORT:-8000}", "--reload"]
     depends_on:
       - mongodb
-  
-  mongodb:  
-    image: mongo:latest    
-    ports:  
-      - "${MONGO_PORT:-27017}:27017"   
-    volumes:  
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
       - mongo_data:/data/db
 
   seed:
@@ -44,5 +54,6 @@ services:
       - server
       - mongodb
 
-volumes:  
+volumes:
   mongo_data:
+
