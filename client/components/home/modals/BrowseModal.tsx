@@ -9,6 +9,8 @@ interface Quiz {
   question: string;
   options?: string[];
   answer: string;
+  subcategory?: string;
+  question_type?: string;
 }
 
 interface BrowseModalProps {
@@ -27,29 +29,50 @@ const BrowseModal: React.FC<BrowseModalProps> = ({ isOpen, onClose }) => {
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data } = await axios.get("/api/categories");
-      setCategories(data);
+      try {
+        const { data } = await axios.get(`${API_BASE}/api/categories`);
+        setCategories(data);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+      }
     };
     if (isOpen) fetchCategories();
-  }, [isOpen]);
+  }, [isOpen, API_BASE]);
 
   const fetchQuizTypes = async (category: string) => {
-    const { data } = await axios.get(`/api/category/${category}/types`);
-    setQuizTypes(data);
-    setFilteredTypes(data);
-    setSelectedType(null);
-    setQuizzes([]);
-    setPage(1);
+    try {
+      const { data } = await axios.get(
+        `${API_BASE}/api/category/${category}/types`,
+      );
+      setQuizTypes(data);
+      setFilteredTypes(data);
+      setSelectedType(null);
+      setQuizzes([]);
+      setPage(1);
+      setHasMore(true);
+    } catch (err) {
+      console.error("Error fetching quiz types:", err);
+    }
   };
 
-  const fetchQuizzes = async (category: string, type: string, pageNum = 1) => {
-    const { data } = await axios.get(
-      `/api/category/${category}/type/${type}?page=${pageNum}&page_size=5`,
-    );
-    if (data.length < 5) setHasMore(false);
-    setQuizzes((prev) => (pageNum === 1 ? data : [...prev, ...data]));
+  const fetchQuizzes = async (
+    category: string,
+    type: string,
+    pageNum: number = 1,
+  ) => {
+    try {
+      const { data } = await axios.get(
+        `${API_BASE}/api/category/${category}/type/${type}?page=${pageNum}&page_size=5`,
+      );
+      if (data.length < 5) setHasMore(false);
+      setQuizzes((prev) => (pageNum === 1 ? data : [...prev, ...data]));
+    } catch (err) {
+      console.error("Error fetching quizzes:", err);
+    }
   };
 
   useEffect(() => {
@@ -64,9 +87,11 @@ const BrowseModal: React.FC<BrowseModalProps> = ({ isOpen, onClose }) => {
   }, [search, quizTypes]);
 
   const handleTypeSelect = (type: string) => {
+    if (!selectedCategory) return;
     setSelectedType(type);
     setPage(1);
-    fetchQuizzes(selectedCategory!, type);
+    setHasMore(true);
+    fetchQuizzes(selectedCategory, type, 1);
   };
 
   const loadMore = () => {
@@ -115,9 +140,10 @@ const BrowseModal: React.FC<BrowseModalProps> = ({ isOpen, onClose }) => {
                   onClick={() => {
                     setSelectedCategory(null);
                     setQuizTypes([]);
-                    setQuizzes([]);
+                    setFilteredTypes([]);
                     setSearch("");
                     setSelectedType(null);
+                    setQuizzes([]);
                   }}
                   className="text-sm text-blue-600 hover:underline"
                 >
@@ -168,6 +194,11 @@ const BrowseModal: React.FC<BrowseModalProps> = ({ isOpen, onClose }) => {
                       <p className="mt-2 text-sm">
                         <strong>Answer:</strong> {quiz.answer}
                       </p>
+                      {quiz.subcategory && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Subcategory: {quiz.subcategory}
+                        </p>
+                      )}
                     </div>
                   ))}
                   {hasMore && (
