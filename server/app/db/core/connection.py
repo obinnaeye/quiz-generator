@@ -15,6 +15,7 @@ database = client["quizApp_db"]
 quizzes_collection = database["quizzes"]
 users_collection = database["users"]
 quiz_history_collection = database["quiz_history"]
+quiz_categories_collection = database["quizzes_category"]
 
 async def ensure_user_indexes(users_collection: AsyncIOMotorCollection):
     await users_collection.create_index("email", unique=True) 
