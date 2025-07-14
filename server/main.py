@@ -2,7 +2,7 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from typing import Dict, Any, List
-
+import redis
 from fastapi import FastAPI, Body, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -104,3 +104,12 @@ async def download_quiz_handler(query: DownloadQuizQuery = Depends()) -> Streami
 
 app.include_router(save_quiz_router, prefix="/api")
 app.include_router(get_quiz_history_router, prefix="/api")
+
+
+
+
+@app.get("/ping-redis")
+def ping_redis():
+    r = redis.Redis.from_url(os.getenv("REDIS_URL", "redis://localhost:6379/0"))
+    return {"pong": r.ping()}
+
