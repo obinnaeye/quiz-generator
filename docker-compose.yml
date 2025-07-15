@@ -13,6 +13,7 @@ services:
       - ./client:/client
     environment:
       - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+      - SHARE_URL=${SHARE_URL}
     command: ["pnpm", "run", "dev"]
     depends_on:
       - server
@@ -26,10 +27,15 @@ services:
     volumes:
       - ./server:/server
     environment:
+      - SENDER_EMAIL=${SENDER_EMAIL}
+      - SENDER_PASSWORD=${SENDER_PASSWORD}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - SHARE_URL=${SHARE_URL}
       - MONGO_URI=${MONGO_URI}
-      - PYTHONPATH=/
       - ALLOWED_ORIGINS=http://localhost:3000
       - REDIS_URL=redis://redis:6379/0
+      - PYTHONPATH=/
     command: ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "${BACKEND_PORT:-8000}", "--reload"]
     depends_on:
       - mongodb
@@ -42,9 +48,14 @@ services:
     volumes:
       - ./server:/server
     environment:
+      - SENDER_EMAIL=${SENDER_EMAIL}
+      - SENDER_PASSWORD=${SENDER_PASSWORD}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - SHARE_URL=${SHARE_URL}
       - MONGO_URI=${MONGO_URI}
-      - PYTHONPATH=/
       - REDIS_URL=redis://redis:6379/0
+      - PYTHONPATH=/
     command: ["celery", "-A", "server.celery_config.celery_app", "worker", "--loglevel=info", "--pool=solo"]
     depends_on:
       - redis
