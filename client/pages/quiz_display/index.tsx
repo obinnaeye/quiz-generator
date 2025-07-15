@@ -17,7 +17,8 @@ const QuizDisplayPage: React.FC = () => {
   const searchParams = useSearchParams();
   const questionType = searchParams.get("questionType") || "multichoice";
   const numQuestions = Number(searchParams.get("numQuestions")) || 1;
-  const userId = searchParams.get("userId") || "defaultUserId"; // ✅ (for now, until auth works)
+  const userId = searchParams.get("userId") || "defaultUserId";
+  const source = searchParams.get("source") || "mock"; // ✅ Added source param
 
   const [quizQuestions, setQuizQuestions] = useState<any[]>([]);
   const [userAnswers, setUserAnswers] = useState<(string | number)[]>([]);
@@ -37,7 +38,6 @@ const QuizDisplayPage: React.FC = () => {
         setQuizQuestions(data);
         setUserAnswers(Array(data.length).fill(""));
 
-        // ✅ Save to history after generating the quiz
         await saveQuizToHistory(userId, questionType, data);
       } catch (error) {
         console.error("Error fetching quiz questions:", error);
@@ -63,12 +63,15 @@ const QuizDisplayPage: React.FC = () => {
           user_answer: userAnswers[i].toString(),
           correct_answer: correct.toString(),
           question_type: q.question_type,
+          source, // ✅ Attach source to each question
         };
       });
+
       const { data: report } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/grade-answers`,
         payload,
       );
+
       const transformed = report.map((r: any) =>
         r.question_type === "true-false"
           ? {
@@ -78,6 +81,7 @@ const QuizDisplayPage: React.FC = () => {
             }
           : r,
       );
+
       setQuizReport(transformed);
       setIsQuizChecked(true);
     } catch (err) {
@@ -91,7 +95,6 @@ const QuizDisplayPage: React.FC = () => {
 
       <main className="flex-1 flex justify-center px-4 sm:px-6 md:px-8 py-8">
         <div className="w-full max-w-4xl space-y-10">
-          {/* Quiz Questions Card */}
           <section className="bg-white shadow rounded-xl px-4 sm:px-6 py-6 sm:py-8 border border-gray-200">
             <h1 className="text-xl sm:text-2xl font-bold text-[#0F2654] mb-6">
               {`${questionType.charAt(0).toUpperCase() + questionType.slice(1)} Quiz`}
@@ -127,7 +130,6 @@ const QuizDisplayPage: React.FC = () => {
             </div>
           </section>
 
-          {/* Quiz Results Card */}
           {isQuizChecked && (
             <section className="bg-white shadow rounded-xl px-4 sm:px-6 py-6 sm:py-8 border border-gray-200">
               <h2 className="text-xl sm:text-2xl font-bold text-[#0F2654] mb-4">

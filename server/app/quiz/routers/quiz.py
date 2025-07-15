@@ -1,42 +1,48 @@
 from fastapi import APIRouter, HTTPException
-from typing import List
+from typing import List, Literal
 from pydantic import BaseModel
-from server.app.quiz.utils.questions import get_questions  # Import your logic for fetching questions
-from server.app.quiz.utils.grading import grade_answers  # Import your grading logic
+from server.app.quiz.utils.questions import get_questions
+from server.app.quiz.utils.grading import grade_answers
+from server.app.quiz.utils.openai_grading import grade_answers_openai
 
 router = APIRouter()
 
-# Define request body structure for grading answers
 class UserAnswer(BaseModel):
     question: str
     user_answer: str
     correct_answer: str
-    question_type: str  # Add question_type to the model
+    question_type: str
+    source: Literal["mock", "ai"] = "mock"
 
-# API Route to grade answers
-@router.post("/grade-answers")
 @router.post("/grade-answers")
 async def grade_user_answers(user_answers: List[UserAnswer]):
     try:
-        # Convert each Pydantic model instance to a dict
-        graded_result = grade_answers([ua.dict() for ua in user_answers])
+        parsed_answers = [ua.dict() for ua in user_answers]
+        source = parsed_answers[0].get("source", "mock")
+
+        if source == "ai":
+            graded_result = await grade_answers_openai(parsed_answers)
+        else:
+            graded_result = grade_answers(parsed_answers)
+
         return graded_result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error grading answers: {str(e)}")
 
-
-# Define request body structure for fetching questions
 class QuestionRequest(BaseModel):
     question_type: str
     num_questions: int
+    profession: str | None = None
+    audience_type: str | None = None
+    custom_instruction: str | None = None
+    difficulty_level: str | None = None
 
 class QuizQuestion(BaseModel):
     question: str
     options: List[str] | None = None
     question_type: str
-    answer: str  # ✅ Added the answer field
+    answer: str
 
-# API Route to fetch questions
 @router.post("/get-questions", response_model=List[QuizQuestion])
 def fetch_questions(request: QuestionRequest):
     try:
@@ -48,7 +54,6 @@ def fetch_questions(request: QuestionRequest):
                 "options": q.get("options", []) if isinstance(q.get("options"), list) else [],
                 "question_type": request.question_type,
                 "answer": str(q.get("answer")) if q.get("answer") is not None else ""
-
             }
             for q in selected_questions
         ]
@@ -57,22 +62,19 @@ def fetch_questions(request: QuestionRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error retrieving questions")
 
-# Define request body structure for quiz generation
 class QuizRequest(BaseModel):
     profession: str
     num_questions: int
     question_type: str
     difficulty_level: str
 
-# API Route to generate a quiz
 @router.post("/generate-quiz")
 async def generate_quiz(request: QuizRequest):
-    # Simulate quiz generation logic
     return {
         "message": "Quiz generated successfully",
         "profession": request.profession,
         "num_questions": request.num_questions,
         "question_type": request.question_type,
         "difficulty_level": request.difficulty_level,
-        "questions": ["Q1", "Q2", "Q3"],  # Replace with actual quiz data
+        "questions": ["Q1", "Q2", "Q3"],
     }
