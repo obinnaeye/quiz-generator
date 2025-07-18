@@ -13,10 +13,7 @@ services:
       - ./client:/client
     environment:
       - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-<<<<<<< HEAD
       - NEXT_PUBLIC_SSR_API_BASE_URL=http://server:8000
-=======
->>>>>>> master
       - SHARE_URL=${SHARE_URL}
     command: ["pnpm", "run", "dev"]
     depends_on:
@@ -36,11 +33,7 @@ services:
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT}
       - SHARE_URL=${SHARE_URL}
-<<<<<<< HEAD
       - MONGO_URI=mongodb://mongodb:27017/quizApp_db
-=======
-      - MONGO_URI=${MONGO_URI}
->>>>>>> master
       - ALLOWED_ORIGINS=http://localhost:3000
       - REDIS_URL=redis://redis:6379/0
       - PYTHONPATH=/
@@ -61,11 +54,7 @@ services:
       - EMAIL_HOST=${EMAIL_HOST}
       - EMAIL_PORT=${EMAIL_PORT}
       - SHARE_URL=${SHARE_URL}
-<<<<<<< HEAD
       - MONGO_URI=mongodb://mongodb:27017/quizApp_db
-=======
-      - MONGO_URI=${MONGO_URI}
->>>>>>> master
       - REDIS_URL=redis://redis:6379/0
       - PYTHONPATH=/
     command: ["celery", "-A", "server.celery_config.celery_app", "worker", "--loglevel=info", "--pool=solo"]
