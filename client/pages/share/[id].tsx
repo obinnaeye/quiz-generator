@@ -6,10 +6,8 @@ import { SharePageProps } from "../../interfaces/props";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const id = context.params?.id as string;
-  const isServer = typeof window === "undefined";
-  const API_BASE_URL = isServer
-    ? "http://server:8000" // inside Docker container network
-    : process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+  const API_BASE_URL = process.env.NEXT_PUBLIC_SSR_API_BASE_URL;
 
   try {
     console.log(API_BASE_URL);
