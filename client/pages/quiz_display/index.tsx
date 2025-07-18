@@ -10,6 +10,7 @@ import {
   DownloadQuizButton,
   NavBar,
   Footer,
+  ShareButton,
 } from "../../components/home";
 import { saveQuizToHistory } from "../../lib/functions/saveQuizToHistory";
 
@@ -123,11 +124,11 @@ const QuizDisplayPage: React.FC = () => {
                 question_type={questionType}
                 numQuestion={numQuestions}
               />
+              <ShareButton />
               {isQuizChecked && <NewQuizButton />}
             </div>
           </section>
 
-          {/* Quiz Results Card */}
           {isQuizChecked && (
             <section className="bg-white shadow rounded-xl px-4 sm:px-6 py-6 sm:py-8 border border-gray-200">
               <h2 className="text-xl sm:text-2xl font-bold text-[#0F2654] mb-4">
